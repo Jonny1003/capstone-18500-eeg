@@ -1,0 +1,3 @@
+
+# ignore private credentials for API access
+credentials/*
