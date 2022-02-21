@@ -1,0 +1,263 @@
+{
+    "Markers": [
+        {
+            "endDatetime": "2022-02-16T20:14:31.344958-05:00",
+            "extras": {
+            },
+            "index": 1,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:14:31.346519-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:31.346519-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:31.344958-05:00",
+            "type": "instance",
+            "uuid": "32a41eb5-0dbe-4215-b2b6-ca6aa03ca505",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:33.055680-05:00",
+            "extras": {
+            },
+            "index": 2,
+            "label": "Lift Right Arm",
+            "originalEndDatetime": "2022-02-16T20:14:33.056959-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:33.056959-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:33.055680-05:00",
+            "type": "instance",
+            "uuid": "252701ef-53f3-40bd-8db1-16bfe60bed11",
+            "value": 23
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:33.329083-05:00",
+            "extras": {
+            },
+            "index": 3,
+            "label": "Lift Right Arm",
+            "originalEndDatetime": "2022-02-16T20:14:33.329259-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:33.329259-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:33.329083-05:00",
+            "type": "instance",
+            "uuid": "adeb02ad-0730-4a7e-98c4-80b4371c578e",
+            "value": 24
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:33.508748-05:00",
+            "extras": {
+            },
+            "index": 4,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:14:33.511067-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:33.511067-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:33.508748-05:00",
+            "type": "instance",
+            "uuid": "a27f695d-974d-4d51-85f4-bb84f677bd29",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:33.672790-05:00",
+            "extras": {
+            },
+            "index": 5,
+            "label": "Lift Right Arm",
+            "originalEndDatetime": "2022-02-16T20:14:33.671504-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:33.671504-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:33.672790-05:00",
+            "type": "instance",
+            "uuid": "2c4c563b-08d7-4c99-83e6-bbbbe6f3c266",
+            "value": 23
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:33.883700-05:00",
+            "extras": {
+            },
+            "index": 6,
+            "label": "Lift Right Arm",
+            "originalEndDatetime": "2022-02-16T20:14:33.884671-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:33.884671-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:33.883700-05:00",
+            "type": "instance",
+            "uuid": "97d64d3b-aa6e-4def-8865-4388f9c2b613",
+            "value": 24
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:34.055554-05:00",
+            "extras": {
+            },
+            "index": 7,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:14:34.058567-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:34.058567-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:34.055554-05:00",
+            "type": "instance",
+            "uuid": "874b36f3-1694-40fb-9630-75d323de76b4",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:34.258653-05:00",
+            "extras": {
+            },
+            "index": 8,
+            "label": "Lift Right Arm",
+            "originalEndDatetime": "2022-02-16T20:14:34.262422-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:34.262422-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:34.258653-05:00",
+            "type": "instance",
+            "uuid": "64ad95d6-4d98-4e3f-98cf-4f3c31e71c58",
+            "value": 23
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:34.485187-05:00",
+            "extras": {
+            },
+            "index": 9,
+            "label": "Lift Right Arm",
+            "originalEndDatetime": "2022-02-16T20:14:34.486870-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:34.486870-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:34.485187-05:00",
+            "type": "instance",
+            "uuid": "77de7d51-6595-4a68-8864-1393663a35a0",
+            "value": 24
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:35.344454-05:00",
+            "extras": {
+            },
+            "index": 10,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:14:35.347051-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:35.347051-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:35.344454-05:00",
+            "type": "instance",
+            "uuid": "13ad2bd0-9d00-4831-8c4d-67085791fbc7",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:39.867321-05:00",
+            "extras": {
+            },
+            "index": 11,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:14:39.865140-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:39.865140-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:39.867321-05:00",
+            "type": "instance",
+            "uuid": "7a7ef29a-95c8-4d39-a9b4-5ac088dc8ed0",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:48.178773-05:00",
+            "extras": {
+            },
+            "index": 12,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:14:48.180747-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:48.180747-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:48.178773-05:00",
+            "type": "instance",
+            "uuid": "d5467a5f-61c1-47dc-a113-903a1738b317",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:54.357681-05:00",
+            "extras": {
+            },
+            "index": 13,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:14:54.355566-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:54.355566-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:54.357681-05:00",
+            "type": "instance",
+            "uuid": "e44967d3-0def-4cf5-8316-778c70accf84",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:14:55.779377-05:00",
+            "extras": {
+            },
+            "index": 14,
+            "label": "Lift Right Arm",
+            "originalEndDatetime": "2022-02-16T20:14:55.780929-05:00",
+            "originalStartDatetime": "2022-02-16T20:14:55.780929-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:14:55.779377-05:00",
+            "type": "instance",
+            "uuid": "c87bccd9-6901-4027-add9-7b89a22dfecc",
+            "value": 23
+        },
+        {
+            "endDatetime": "2022-02-16T20:15:03.169070-05:00",
+            "extras": {
+            },
+            "index": 15,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:15:03.166394-05:00",
+            "originalStartDatetime": "2022-02-16T20:15:03.166394-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:15:03.169070-05:00",
+            "type": "instance",
+            "uuid": "dff3fd0e-053a-49ac-bc6c-5ef93778a965",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:15:06.395225-05:00",
+            "extras": {
+            },
+            "index": 16,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:15:06.394408-05:00",
+            "originalStartDatetime": "2022-02-16T20:15:06.394408-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:15:06.395225-05:00",
+            "type": "instance",
+            "uuid": "9be9dca1-0f62-4c9c-b353-b70379ab05c1",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:15:09.902596-05:00",
+            "extras": {
+            },
+            "index": 17,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:15:09.904498-05:00",
+            "originalStartDatetime": "2022-02-16T20:15:09.904498-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:15:09.902596-05:00",
+            "type": "instance",
+            "uuid": "00bb9577-1f9a-4878-a85d-a0b4e0b783c0",
+            "value": 22
+        },
+        {
+            "endDatetime": "2022-02-16T20:15:19.627931-05:00",
+            "extras": {
+            },
+            "index": 18,
+            "label": "Blink eye while relaxing",
+            "originalEndDatetime": "2022-02-16T20:15:19.630920-05:00",
+            "originalStartDatetime": "2022-02-16T20:15:19.630920-05:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-02-16T20:15:19.627931-05:00",
+            "type": "instance",
+            "uuid": "c5533a10-9f0e-48c7-8324-801ab614bb8c",
+            "value": 22
+        }
+    ],
+    "connectionType": "dongle",
+    "exportApp": "com.emotiv.emotivpro",
+    "exportTime": "2022-02-16T20:16:39.221-05:00",
+    "headsetType": "INSIGHT",
+    "mappings": null,
+    "recordId": "856c6978-14e5-48be-a05c-f1d990619567",
+    "user": "jon1003"
+}
