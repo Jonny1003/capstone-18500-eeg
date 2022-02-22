@@ -6,15 +6,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from datetime import datetime, timedelta
+from constants import *
 
-# constants
-DEBUG = True
-RAW_DATA_LOC_FROM_SRC = "data/raw"
-COMPILED_DATA_LOC_FROM_SRC = "data/compiled"
-TIME_DELAY = 3 # in seconds
-COLUMN_TYPES = {'Timestamp' : np.float64}
-AF3 = "EEG.AF3"
-AF4 = "EEG.AF4"
+# This file contains a data processing pipeline for converting eeg recordings
+# into 3 second recordings of each output we would like to recognize.
+#
+# Link to the overview procedure of how data is being collected:
+# https://docs.google.com/document/d/10lfj7_p8Hi8REXEZdnbt7ZMN3tvP4o2EDDoPUSI710A/edit?usp=sharing
 
 
 def findRawDataFolder(folderName, depth_from_src=1):
@@ -35,6 +33,13 @@ def findRawDataFolder(folderName, depth_from_src=1):
     return None
 
 def organizeRawData(dirLoc):
+    '''
+    For all files in dirLoc, loop through and group the appropriate
+    files together into a tuple. This function should ONLY be used 
+    on a data set within the raw folder. It will do its best to detect
+    if raw data set files were not exported correctly, but do your best 
+    to not corrupt that folder... >.<
+    '''
     if DEBUG:
         print("\nOrganizing data files...\n")
     # walks through the specific directory and creates grouping
@@ -82,7 +87,11 @@ def organizeRawData(dirLoc):
     return groups
 
 def parseData(dir_loc, groupings, label):
-    '''converts the raw data into data points
+    '''
+    Converts the raw data into small data sets based on the 
+    markers. Essentially finds all data points within 
+    TIME_DELAY of a designated marker label and groups all those 
+    data points into 1 data frame.
     '''
     if DEBUG:
         print("\nParsing data...\n")
@@ -95,7 +104,7 @@ def parseData(dir_loc, groupings, label):
             prevMarker = ""
             for marker in markerData['Markers']:
                 if marker['label'] == 'invalid':
-                    if prevMarker == label and len(out):
+                    if prevMarker != 'invalid' and len(out):
                         # remove the previous data point because it is invalid
                         badFrame = out.pop()
                         if DEBUG:
@@ -115,6 +124,9 @@ def parseData(dir_loc, groupings, label):
     return out
 
 def save_compiled_data_points(folder_name, data_points, depth_from_src=1):
+    '''
+    Save the parsed data points to a destination.
+    '''
     if DEBUG:
         print("\nSaving compiled data points...\n")
     currDir = os.getcwd()
@@ -131,7 +143,13 @@ def save_compiled_data_points(folder_name, data_points, depth_from_src=1):
         timestamp = point.iat[0,0]
         point.to_csv(f"{dir_loc}/{folder_name}_{timestamp}.csv")
 
+
 def compile_raw_data(folder_name, marker_label):
+    '''
+    data compilation pipeline
+    folder_name: the folder within the raw directory to pull data sets from
+    marker_label: the explicit label of the marker to search for within the eeg data
+    '''
     dir_loc = findRawDataFolder(folder_name)
     data_groups = organizeRawData(dir_loc)
     data_points = parseData(dir_loc, data_groups, marker_label)
@@ -142,6 +160,7 @@ CMD_ARG_FOLDER = "FOLDER="
 CMD_ARG_MARKER = "MARKER="
 
 if __name__ == "__main__":
+    # command line parse
     args = sys.argv
     folder_name, marker_label = None, None
     print(args)
@@ -152,6 +171,8 @@ if __name__ == "__main__":
             marker_label = arg.lstrip(CMD_ARG_MARKER).strip()
     if not folder_name or not marker_label:
         print("Provided bad arguments.")
-        print(f"Expecting> python3 raw_to_compiled.py {CMD_ARG_FOLDER}<folder name> {CMD_ARG_MARKER}<marker label>")
+        print(f"Use format> python3 raw_to_compiled.py {CMD_ARG_FOLDER}<folder name> {CMD_ARG_MARKER}<marker label>")
         sys.exit(-1)
+
+    # proceed with compiling data
     compile_raw_data(folder_name, marker_label)
