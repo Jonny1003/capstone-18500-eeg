@@ -144,6 +144,7 @@ CMD_ARG_MARKER = "MARKER="
 if __name__ == "__main__":
     args = sys.argv
     folder_name, marker_label = None, None
+    print(args)
     for arg in args:
         if CMD_ARG_FOLDER in arg:
             folder_name = arg.lstrip(CMD_ARG_FOLDER).strip()
