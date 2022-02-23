@@ -1,9 +1,7 @@
-import csv 
 import os
 import json
 import pandas 
 import numpy as np
-import matplotlib.pyplot as plt
 import sys
 from datetime import datetime, timedelta
 from constants import *
