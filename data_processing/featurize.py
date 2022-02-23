@@ -22,6 +22,11 @@ def getMeanOfColumn(columnName, dataframe):
     '''gets the mean of a specified column'''
     return dataframe[columnName].mean()
 
+def getNthLargestOfColumn(columnName, n, dataframe):
+    '''gets the nth largest value in the specified column'''
+    topN = dataframe[columnName].nlargest(n, keep='all')
+    return topN.iloc[-1]
+
 
 # dictionary of feature functions to compute a statistic from a single compiled data point
 FEATURE_LIBRARY = {
@@ -31,11 +36,13 @@ FEATURE_LIBRARY = {
     'AF3_time_of_max': lambda df: getTimestampOfMax(AF3, df),
     'AF4_time_of_max': lambda df: getTimestampOfMax(AF4, df),
     'Pz_time_of_max': lambda df: getTimestampOfMax(PZ, df),
+    'AF3_second_largest': lambda df: getNthLargestOfColumn(AF3, 2, df),
+    'AF4_second_largest': lambda df: getNthLargestOfColumn(AF4, 2, df),
+    'Pz_second_largest': lambda df: getNthLargestOfColumn(PZ, 2, df),
     'AF3_mean': lambda df: getMeanOfColumn(AF3, df),
     'AF4_mean': lambda df: getMeanOfColumn(AF4, df),
-    'Pz_mean': lambda df: getMeanOfColumn(PZ, df),
+    'Pz_mean': lambda df: getMeanOfColumn(PZ, df)
 }
-
 
 def getPathToCompiledDataSet(folderName, depth_from_src=1):
     '''Source the path to the compiled data set'''
@@ -80,13 +87,22 @@ def computeFeatures(folderPath, features, label):
         featureTable.loc[rInd] = row 
     return featureTable
 
-#Example usage:
+def vectorizeColumn(df, column, bound):
+    # turns an entire column of data into a single horizontal vector
+    # of length bound for each compiled datapoint in folderPath
+    row = list(df.loc[column].iloc[:bound])
+    return row
+
+# Example usage:
+
+# features = ["AF3_max", "AF4_max", "AF3_time_of_max", "AF4_time_of_max"]
+# src1 = getPathToCompiledDataSet("blink")
+# f1 = computeFeatures(src1, features, "blink")
+# src2 = getPathToCompiledDataSet("baseline")
+# f2 = computeFeatures(src2, features, "baseline")
+# featureTable = pandas.concat([f1, f2])
+# featureTable.to_csv("../data/featurized/sandbox/blink_baseline_max.csv")
 
 
-features = ["AF3_max", "AF4_max", "AF3_time_of_max", "AF4_time_of_max"]
-src1 = getPathToCompiledDataSet("blink")
-f1 = computeFeatures(src1, features, "blink")
-src2 = getPathToCompiledDataSet("baseline")
-f2 = computeFeatures(src2, features, "baseline")
-featureTable = pandas.concat([f1, f2])
-featureTable.to_csv("../data/featurized/sandbox/blink_baseline_max.csv")
+
+

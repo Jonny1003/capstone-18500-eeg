@@ -4,26 +4,27 @@ from sklearn.linear_model import LogisticRegression
 import pandas
 
 
-loc = "/Users/jonathanke/Documents/CMU/18500/data/featurized/sandbox/blink_baseline_max.csv" 
+loc = "/Users/jonathanke/Documents/CMU/18500/data/featurized/sandbox/alot_of_features.csv"
 
 data = pandas.read_csv(loc)
 data = data.sample(frac=1)
-split = int(0.75 * data.shape[0])
-print(split)
-print(data.shape[0])
+split = int(0.7 * data.shape[0])
+print("Number of training samples:", split)
+print("Total samples:", data.shape[0])
+print("Number of test samples:", data.shape[0] - split)
 
 training = data.head(split)
-xTraining = training[["AF3_max","AF4_max"]]
+xTraining = training.iloc[:, 1:-1]
 yTraining = training["label"]
 
 test = data.tail(data.shape[0] - split)
-xTest = test[["AF3_max","AF4_max"]]
+xTest = test.iloc[:, 1:-1]
 yTest = test['label']
 
-print(training)
-print(test)
+print(xTraining)
+print(xTest)
 
-model = RandomForestClassifier(criterion="entropy", max_depth=4)
+model = RandomForestClassifier(criterion="entropy", max_depth=5)
 model.fit(xTraining, yTraining)
 print("RF Predictions:")
 pred = model.predict(xTest) 
