@@ -8,7 +8,7 @@ from constants import *
 # This file contains some plotting tools to visualize and verify data 
 # is what we expect it to be.
 
-FOLDER_NAME = "double_blink"
+FOLDER_NAME = "blink"
 DIR =  f"/Users/jonathanke/Documents/CMU/18500/data/compiled/{FOLDER_NAME}"
 
 
@@ -48,13 +48,13 @@ def plot_af3_af4(frame, name, save_loc):
 
 if __name__ == "__main__":
     # modify code below to generate plots
-    # for i, fName in enumerate(os.listdir(DIR)):
-    #     with open(DIR + "/" + fName) as f:
-    #         data = pandas.read_csv(f, dtype=COLUMN_TYPES)
-    #         plot_af3_af4(data, f"Sample {i}", f"visualizations/{FOLDER_NAME}_AF3_AF4/graph_{i}.png")
-    data = pandas.read_csv("/Users/jonathanke/Documents/CMU/18500/data/raw/blink/blink_INSIGHT_147423_2022.02.21T20.01.57.05.00.md.mc.pm.fe.bp.csv",
-        dtype=COLUMN_TYPES, skiprows=1)
-    plot_data(AF3, data, "Recording (microV)", "visualizations/blink_samples_AF3/recording.png")
+    for i, fName in enumerate(os.listdir(DIR)):
+        with open(DIR + "/" + fName) as f:
+            data = pandas.read_csv(f, dtype=COLUMN_TYPES)
+            plot_af3_af4(data, f"Sample {i}", f"visualizations/{FOLDER_NAME}_AF3_AF4/graph_{i}.png")
+    # data = pandas.read_csv("/Users/jonathanke/Documents/CMU/18500/data/raw/blink/blink_INSIGHT_147423_2022.02.21T20.01.57.05.00.md.mc.pm.fe.bp.csv",
+    #     dtype=COLUMN_TYPES, skiprows=1)
+    # plot_data(AF3, data, "Recording (microV)", "visualizations/blink_samples_AF3/recording.png")
 
 
     

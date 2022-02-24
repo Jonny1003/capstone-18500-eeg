@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 import pandas
 
 
-loc = "/Users/jonathanke/Documents/CMU/18500/data/featurized/sandbox/alot_of_features.csv"
+loc = "/Users/jonathanke/Documents/CMU/18500/data/featurized/sandbox/blink_baseline_max.csv"
 
 data = pandas.read_csv(loc)
 data = data.sample(frac=1)
@@ -14,11 +14,11 @@ print("Total samples:", data.shape[0])
 print("Number of test samples:", data.shape[0] - split)
 
 training = data.head(split)
-xTraining = training.iloc[:, 1:-1]
+xTraining = training.iloc[:, 1:3]
 yTraining = training["label"]
 
 test = data.tail(data.shape[0] - split)
-xTest = test.iloc[:, 1:-1]
+xTest = test.iloc[:, 1:3]
 yTest = test['label']
 
 print(xTraining)
