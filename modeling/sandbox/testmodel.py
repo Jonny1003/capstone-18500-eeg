@@ -24,7 +24,7 @@ yTest = test['label']
 print(xTraining)
 print(xTest)
 
-model = RandomForestClassifier(criterion="entropy", max_depth=5)
+model = RandomForestClassifier(criterion="entropy", max_depth=2)
 model.fit(xTraining, yTraining)
 print("RF Predictions:")
 pred = model.predict(xTest) 
