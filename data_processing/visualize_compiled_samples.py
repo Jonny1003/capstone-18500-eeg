@@ -8,7 +8,7 @@ from constants import *
 # This file contains some plotting tools to visualize and verify data 
 # is what we expect it to be.
 
-FOLDER_NAME = "blink"
+FOLDER_NAME = "left_wink"
 DIR =  f"/Users/jonathanke/Documents/CMU/18500/data/compiled/{FOLDER_NAME}"
 
 
