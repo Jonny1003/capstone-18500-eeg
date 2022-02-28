@@ -46,6 +46,11 @@ def organizeRawData(dirLoc):
     data = sorted(os.listdir(dirLoc))
     i = 0
     while i < len(data):
+        if data[i] == '.DS_Store':
+            print("Why does .DS_Store exist????")
+            i += 1
+            continue 
+
         jsonFile, dataFile, intervalFile = None, None, None
         fileName = "NonExistentFileGroup"
         # check if the first file is json
@@ -77,6 +82,8 @@ def organizeRawData(dirLoc):
             groups.append((jsonFile, dataFile, intervalFile))
         elif DEBUG:
             print(f"Could not create group for {fileName}")
+            i += 1
+
 
     if DEBUG:
         print("Groups created:")
