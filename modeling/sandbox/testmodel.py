@@ -2,6 +2,7 @@ from random import Random
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 import pandas
+import joblib
 
 
 loc = "/Users/jonathanke/Documents/CMU/18500/data/featurized/sandbox/blink_baseline_max.csv"
@@ -50,5 +51,23 @@ for i,v in enumerate(pred2):
     if act[i] != v:
         ct += 1
 print("Error:", ct / len(yTest))
+
+joblib.dump(model2, "log_model.joblib")
+joblib.dump(model, "rf_model.joblib")
+
+model3 = joblib.load("log_model.joblib")
+print("LR Predictions:")
+pred3 = model3.predict(xTest)
+print(pred3)
+print("Actual:")
+print(act)
+ct = 0
+for i,v in enumerate(pred3):
+    if act[i] != v:
+        ct += 1
+print("Error:", ct / len(yTest))
+
+
+
 
 

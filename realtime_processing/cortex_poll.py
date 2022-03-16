@@ -54,7 +54,7 @@ def forward_api_data(*args, **kwargs):
         print('done!')
         while not L.empty():
             v = L.get()
-            print(v)
+            print(v) 
 
 
 
