@@ -97,13 +97,27 @@ def vectorizeColumn(df, column, bound):
 
 # Example usage:
 
+# features = ["AF3_max", "AF4_max", "AF3_time_of_max", "AF4_time_of_max"]
+# src1 = getPathToCompiledDataSet("blink")
+# f1 = computeFeatures(src1, features, "blink")
+# src2 = getPathToCompiledDataSet("baseline")
+# f2 = computeFeatures(src2, features, "baseline")
+# featureTable = pandas.concat([f1, f2])
+# featureTable.to_csv("../data/featurized/sandbox/blink_baseline_max.csv")
+
 features = ["AF3_max", "AF4_max", "AF3_time_of_max", "AF4_time_of_max"]
-src1 = getPathToCompiledDataSet("blink")
-f1 = computeFeatures(src1, features, "blink")
+featureTable = None 
+data = []
+for artifact in ['blink', 'double_blink', 'left_wink', 'right_wink', 'triple_blink']:
+    src = getPathToCompiledDataSet(artifact)
+    more_data = computeFeatures(src, features, "artifact")
+    data.append(more_data)
+
 src2 = getPathToCompiledDataSet("baseline")
-f2 = computeFeatures(src2, features, "baseline")
-featureTable = pandas.concat([f1, f2])
-featureTable.to_csv("../data/featurized/sandbox/blink_baseline_max.csv")
+baseline = computeFeatures(src2, features, "baseline")
+featureTable = pandas.concat(data + [baseline])
+
+featureTable.to_csv("../data/featurized/sandbox/artifact_baseline_max.csv")
 
 
 
