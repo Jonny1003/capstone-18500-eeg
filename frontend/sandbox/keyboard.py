@@ -75,10 +75,16 @@ class KeyboardApplication():
     def on_left_wink(self, *args, **kwargs):
         self.focus_col = max(0, self.focus_col - 1)
         pyautogui.moveRel(-self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+        # special behavior for space button row
+        effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+        self.buttons[self.focus_row][effective_col].focus_set()
 
     def on_right_wink(self, *args, **kwargs):
         self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
         pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+        # special behavior for space button row
+        effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+        self.buttons[self.focus_row][effective_col].focus_set()
 
     def on_key_press(self, event):
         # modify focus row and column according to key input
