@@ -57,10 +57,10 @@ for i,v in enumerate(pred2):
         ct += 1
 print("Error:", ct / len(yTest))
 
-# fig, ax = plt.subplots()
-# colors = ['b' if v == 'artifact' else 'r' for v in data['label']]
-# ax.scatter(data['AF3_max'], data['AF4_max'], c=colors)
-# plt.show()
+fig, ax = plt.subplots()
+colors = ['b' if v == 'artifact' else 'r' for v in data['label']]
+ax.scatter(data['AF3_max'], data['AF4_max'], c=colors)
+plt.show()
 
 
 
