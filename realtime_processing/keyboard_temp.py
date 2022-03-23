@@ -168,10 +168,6 @@ class KeyboardApplication():
             self.entry.insert(tkinter.END, value)
             
 def main(emitter):
-
-    
-    
-
     root = tkinter.Tk()
     root.title('Keyboard')
     root['bg']='grey'
