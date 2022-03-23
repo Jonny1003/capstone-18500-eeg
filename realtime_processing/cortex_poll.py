@@ -10,6 +10,7 @@ import threading
 import joblib
 import json
 import numpy as np
+import keyboard_temp
 
 # this file is responsible for using Cortex to startup and poll data from headset
 
@@ -18,9 +19,10 @@ HEADSET_ID = "INSIGHT-A2D2029A"
 CREDS_LOC = "/Users/jonathanke/Documents/CMU/18500/credentials/neurocontroller_creds"
 DEBUG = False
 
-MODEL_LOC = "/Users/jonathanke/Documents/CMU/18500/modeling/sandbox/rf_model_artifact_baseline.joblib"
+MODEL_LOC = "/Users/jonathanke/Documents/CMU/18500/modeling/sandbox/rf_model.joblib"
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
+EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink')
 
 data_queue = Queue()
 samples = [0]
@@ -77,6 +79,8 @@ def setup_data_polling(**kwargs):
 def do_predict(**kwargs):
     model = kwargs.get('model')
     signalling_cond = kwargs.get('cond')
+    dispatch = kwargs.get('dispatch')
+
     while True:
         signalling_cond.acquire()
         signalling_cond.wait()
@@ -92,10 +96,25 @@ def do_predict(**kwargs):
             max_af4 = max(data[-1], max_af4)
         res = model.predict(np.array([max_af3, max_af4]).reshape(1,-1))
         print("Predicted: ", res)
+        val = res[0]
+        print(EVENTS)
+        if val in EVENTS:
+            dispatch.emit(val, val)
+        else: 
+            dispatch.emit('other', val)
+
+
 
 if __name__ == '__main__':
     model = joblib.load(MODEL_LOC)
     instance = startup()
+
+    dispatch = Dispatcher()
+    
+    for e in EVENTS:
+        dispatch.register_event(e)
+    dispatch.register_event('other')
+
     signalling_cond = threading.Condition()
     data_poll = threading.Thread(
         group=None, 
@@ -108,11 +127,13 @@ if __name__ == '__main__':
         group=None,
         target=do_predict, 
         name="predictor", 
-        kwargs={'cond':signalling_cond, 'model':model},
+        kwargs={'cond':signalling_cond, 'model':model, 'dispatch':dispatch},
         daemon=True
     )
     data_poll.start()
     predictor.start()
+
+    keyboard_temp.main(dispatch)
 
     data_poll.join()
     print("Cortex polling has exited! Terminating program...")

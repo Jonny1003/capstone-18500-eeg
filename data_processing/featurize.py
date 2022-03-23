@@ -27,6 +27,19 @@ def getNthLargestOfColumn(columnName, n, dataframe):
     topN = dataframe[columnName].nlargest(n, keep='all')
     return topN.iloc[-1]
 
+def getPeaks(columnName, interval, dataframe):
+    '''gets peaks in every interval (in seconds) of the dataframe'''
+    peaks = []
+    interval_start = dataframe.at[1, 'Timestamp']
+    print(interval_start)
+    interval_end = interval_start + interval
+    print(interval_end)
+    subframe = dataframe.loc[(dataframe['Timestamp'] >= interval_start) & dataframe['Timestamp'] <= interval_end]
+    peak = subframe[AF3].max()
+    print(peak)
+    
+    
+
 
 
 
@@ -43,7 +56,8 @@ FEATURE_LIBRARY = {
     'Pz_second_largest': lambda df: getNthLargestOfColumn(PZ, 2, df),
     'AF3_mean': lambda df: getMeanOfColumn(AF3, df),
     'AF4_mean': lambda df: getMeanOfColumn(AF4, df),
-    'Pz_mean': lambda df: getMeanOfColumn(PZ, df)
+    'Pz_mean': lambda df: getMeanOfColumn(PZ, df),
+    'peaks': lambda df: getPeaks(AF3, 2.5, df)
 }
 
 def getPathToCompiledDataSet(folderName, depth_from_src=1):
@@ -105,7 +119,21 @@ def vectorizeColumn(df, column, bound):
 # featureTable = pandas.concat([f1, f2])
 # featureTable.to_csv("../data/featurized/sandbox/blink_baseline_max.csv")
 
-features = ["AF3_max", "AF4_max", "AF3_time_of_max", "AF4_time_of_max"]
+# features = ["AF3_max", "AF4_max", "AF3_time_of_max", "AF4_time_of_max"]
+# featureTable = None 
+# data = []
+# for artifact in ['blink', 'double_blink', 'left_wink', 'right_wink', 'triple_blink']:
+#     src = getPathToCompiledDataSet(artifact)
+#     more_data = computeFeatures(src, features, "artifact")
+#     data.append(more_data)
+
+# src2 = getPathToCompiledDataSet("baseline")
+# baseline = computeFeatures(src2, features, "baseline")
+# featureTable = pandas.concat(data + [baseline])
+
+# featureTable.to_csv("../data/featurized/sandbox/artifact_baseline_max.csv")
+
+features = ['peaks']
 featureTable = None 
 data = []
 for artifact in ['blink', 'double_blink', 'left_wink', 'right_wink', 'triple_blink']:
@@ -117,8 +145,7 @@ src2 = getPathToCompiledDataSet("baseline")
 baseline = computeFeatures(src2, features, "baseline")
 featureTable = pandas.concat(data + [baseline])
 
-featureTable.to_csv("../data/featurized/sandbox/artifact_baseline_max.csv")
-
+featureTable.to_csv("../data/featurized/sandbox/test.csv")
 
 
 

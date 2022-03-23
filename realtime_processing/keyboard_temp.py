@@ -168,20 +168,21 @@ class KeyboardApplication():
             self.entry.insert(tkinter.END, value)
             
 def main(emitter):
+
+    
+    
+
     root = tkinter.Tk()
     root.title('Keyboard')
     root['bg']='grey'
     root.resizable(0,0)
     listener = KeyboardApplication(root)
-    root.mainloop()
 
-    """
-    emitter = FeaturePredictor()
-
-    emitter.bind(double_blink=listener.on_double_blink)
+    emitter.bind(blink=listener.on_double_blink)
     emitter.bind(left_wink=listener.on_left_wink)
     emitter.bind(right_wink=listener.on_right_wink)
-    """
+    root.mainloop()
+    
 
 if __name__ == '__main__':
     main()
