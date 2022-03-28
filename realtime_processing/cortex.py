@@ -341,8 +341,8 @@ class Cortex(Dispatcher):
                 pow_data['pow'] = result_dic['pow']
                 pow_data['time'] = result_dic['time']
                 self.emit('new_pow_data', data=pow_data)
-            else :
-                print(new_data)
+            # else :
+            #     print(new_data)
 
     def extract_data_labels(self, stream_name, stream_cols):
         data = {}

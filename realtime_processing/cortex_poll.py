@@ -19,7 +19,8 @@ HEADSET_ID = "INSIGHT-A2D2029A"
 CREDS_LOC = "/Users/jonathanke/Documents/CMU/18500/credentials/neurocontroller_creds"
 DEBUG = False
 
-MODEL_LOC = "/Users/jonathanke/Documents/CMU/18500/modeling/sandbox/rf_model.joblib"
+MODEL_LOC_BASELINE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/sandbox/rf_model_var_peaks.joblib"
+MODEL_LOC_RIGHT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/sandbox/lr_model_right_wink.joblib"
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
 EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink')
@@ -77,7 +78,7 @@ def setup_data_polling(**kwargs):
     cortex_instance.sub_request(['eeg','dev','eq'])
     
 def do_predict(**kwargs):
-    model = kwargs.get('model')
+    model_predict = kwargs.get('model')
     signalling_cond = kwargs.get('cond')
     dispatch = kwargs.get('dispatch')
 
@@ -94,7 +95,7 @@ def do_predict(**kwargs):
             data = data_queue.get()
             max_af3 = max(data[0],max_af3)
             max_af4 = max(data[-1], max_af4)
-        res = model.predict(np.array([max_af3, max_af4]).reshape(1,-1))
+        res = model_predict(np.array([max_af3, max_af4]).reshape(1,-1))
         print("Predicted: ", res)
         val = res[0]
         print(EVENTS)
@@ -103,10 +104,23 @@ def do_predict(**kwargs):
         else: 
             dispatch.emit('other', val)
 
+def initiate_model():
+    '''create the final model here'''
+    base = joblib.load(MODEL_LOC_BASELINE_EVENT)
+    right_wink = joblib.load(MODEL_LOC_RIGHT_WINK)
+    
+    def model(vec):
+        res1 = base.predict(vec)
+        print(res1)
+        if res1[0] == 'event':
+            # an event occured, check for right wink
+            return right_wink.predict(vec)
+        return 'none'
 
+    return model
 
 if __name__ == '__main__':
-    model = joblib.load(MODEL_LOC)
+    model = initiate_model()
     instance = startup()
 
     dispatch = Dispatcher()
