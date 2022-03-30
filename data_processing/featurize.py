@@ -204,16 +204,17 @@ def vectorizeColumn(df, column, bound):
 ################################################
 # Differentiate blink and left wink vs right wink
 
-features = ['AF3_max', 'AF4_max', 'AF_max_time_diff', 
-    'AF_max_diff', 'AF_ratio', 
-    'AF_adj_max_diff', 'AF_adj_max_ratio']
-featureTable = None 
-data = []
-for artifact in ['blink', 'left_wink', 'right_wink']:
-    src = getPathToCompiledDataSet(artifact)
-    more_data = computeFeatures(src, features, artifact)
-    data.append(more_data)
+if __name__ == '__main__':
+    features = ['AF3_max', 'AF4_max', 'AF_max_time_diff', 
+        'AF_max_diff', 'AF_ratio', 
+        'AF_adj_max_diff', 'AF_adj_max_ratio']
+    featureTable = None 
+    data = []
+    for artifact in ['blink', 'left_wink', 'right_wink']:
+        src = getPathToCompiledDataSet(artifact)
+        more_data = computeFeatures(src, features, artifact)
+        data.append(more_data)
 
-featureTable = pandas.concat(data)
-featureTable.to_csv("../data/featurized/sandbox/blink_winks.csv")
+    featureTable = pandas.concat(data)
+    featureTable.to_csv("../data/featurized/sandbox/blink_winks.csv")
 
