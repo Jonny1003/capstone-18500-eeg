@@ -74,9 +74,6 @@ def median(columnName, df):
     return df[columnName].median()
 
 
-
-
-
 # dictionary of feature functions to compute a statistic from a single compiled data point
 FEATURE_LIBRARY = {
     'AF3_max': lambda df: getMaxOfColumn(AF3, df),
@@ -114,7 +111,6 @@ def getPathToCompiledDataSet(folderName, depth_from_src=1):
     for _ in range(depth_from_src):
         path = os.path.dirname(path)
     path = "/".join((path, COMPILED_DATA_LOC_FROM_SRC, folderName))
-    print(path)
     if (os.path.isdir(path)):
         return path 
     elif DEBUG:
@@ -204,17 +200,17 @@ def vectorizeColumn(df, column, bound):
 ################################################
 # Differentiate blink and left wink vs right wink
 
-if __name__ == '__main__':
-    features = ['AF3_max', 'AF4_max', 'AF_max_time_diff', 
-        'AF_max_diff', 'AF_ratio', 
-        'AF_adj_max_diff', 'AF_adj_max_ratio']
-    featureTable = None 
-    data = []
-    for artifact in ['blink', 'left_wink', 'right_wink']:
-        src = getPathToCompiledDataSet(artifact)
-        more_data = computeFeatures(src, features, artifact)
-        data.append(more_data)
+# if __name__ == '__main__':
+#     features = ['AF3_max', 'AF4_max', 'AF_max_time_diff', 
+#         'AF_max_diff', 'AF_ratio', 
+#         'AF_adj_max_diff', 'AF_adj_max_ratio']
+#     featureTable = None 
+#     data = []
+#     for artifact in ['blink', 'left_wink', 'right_wink']:
+#         src = getPathToCompiledDataSet(artifact)
+#         more_data = computeFeatures(src, features, artifact)
+#         data.append(more_data)
 
-    featureTable = pandas.concat(data)
-    featureTable.to_csv("../data/featurized/sandbox/blink_winks.csv")
+#     featureTable = pandas.concat(data)
+#     featureTable.to_csv("../data/featurized/sandbox/blink_winks.csv")
 

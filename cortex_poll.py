@@ -111,7 +111,6 @@ def do_predict(**kwargs):
         for _ in range(num_new_samples):
             d = data_queue.get()
             new_samples.append(d)
-        # print(new_samples[0][0])
         new_samples = pandas.DataFrame(new_samples, columns=EEG_LABELS)
         
         window = pandas.concat([window, new_samples])
