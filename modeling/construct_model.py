@@ -1,5 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
 import pandas
 import joblib
 import matplotlib.pyplot as plt
@@ -34,7 +35,7 @@ def create_feature_set(model_spec):
     featureTable = pandas.concat(data)
     featureTable.to_csv(feature_data_path(model_spec))
 
-def train_model(model_spec, model):
+def train_model(model_spec):
     if DEBUG:
         print("Building Logistic Regression Model...\n")
     
@@ -61,6 +62,26 @@ def train_model(model_spec, model):
         print(xTraining)
         print("Testing data:")
         print(xTest)
+
+    if model_spec['model'] == 'lr':
+        # reweight logistic regression model 
+        # due to imbalance of data
+        # total_samples = data.shape[0]
+        # labels = data['label'].unique()
+        # weights = dict()
+        # for label in labels:
+        #     weights[label] = total_samples / data[data['label'] == label].count()
+        # print(weights)
+
+        model = LogisticRegression(
+            solver=model_spec.get('lr_solver'), 
+            max_iter=model_spec.get('lr_max_iter'),
+            verbose=1, 
+            class_weight='balanced')
+    elif model_spec['model'] == 'rf':
+        model = RandomForestClassifier(
+            criterion="entropy", 
+            max_depth=model_spec.get('rf_max_depth'))
 
     model.fit(xTraining, yTraining)
 
@@ -95,6 +116,9 @@ def train_model(model_spec, model):
         for label in label_types:
             num_occurences = data[data['label'] == label]['label'].count()
             log.write(f'\t{label}: {num_occurences}\n')
+        if model_spec['model'] == 'lr':
+            roc_auc = roc_auc_score(yTest, model.decision_function(xTest))
+            log.write(f'ROC AUC Score: {roc_auc}\n')
     
     # Create graphs of data 
     colorChoices = ['b', 'g', 'r', 'c', 'm', 'y']
@@ -145,20 +169,11 @@ if __name__ == '__main__':
         if compute_features:
             create_feature_set(model_spec)
 
-        if model_spec['model'] == 'lr':
-            model = LogisticRegression(
-                solver=model_spec.get('lr_solver'), 
-                max_iter=model_spec.get('lr_max_iter'),
-                verbose=1)
-        elif model_spec['model'] == 'rf':
-            model = RandomForestClassifier(
-                criterion="entropy", 
-                max_depth=model_spec.get('rf_max_depth'))
-        else:
-            print("ERROR: Invalid model...")
+        if model_spec['model'] not in ['lr', 'rf']:
+            print("ERROR: Invalid model specification...")
             sys.exit(-1)
 
-        train_model(model_spec, model)
+        train_model(model_spec)
 
 
         

@@ -4,7 +4,7 @@ import pandas
 import numpy as np
 import sys
 from datetime import datetime, timedelta
-from constants import *
+from modeling.constants import *
 
 # This file contains functions for generating feature vectors of a compiled data set.
 
