@@ -1,0 +1,5 @@
+Prediction Error: 0.008571428571428572
+Label distribution:
+	none: 950
+	noise: 215
+ROC AUC Score: 0.9989835461533575

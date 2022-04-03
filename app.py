@@ -36,6 +36,8 @@ EEG_LABELS = [
 data_queue = Queue()
 samples = [0]
 
+event_queue = Queue()
+
 def load_credentials(cred_loc):
     creds = dict()
     with open(cred_loc, 'r') as f:
@@ -195,7 +197,7 @@ if __name__ == '__main__':
     data_poll.start()
     predictor.start()
 
-    keyboard.main(dispatch)
+    keyboard.main(dispatch, event_queue)
 
     data_poll.join()
     print("Cortex polling has exited! Terminating program...")

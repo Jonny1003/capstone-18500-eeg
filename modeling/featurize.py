@@ -1,10 +1,12 @@
 import os
 import json
+from re import L
 import pandas 
 import numpy as np
 import sys
 from datetime import datetime, timedelta
-from modeling.constants import *
+# from modeling.constants import *
+from constants import *
 
 # This file contains functions for generating feature vectors of a compiled data set.
 
@@ -87,6 +89,32 @@ def kurtosis(columnName, df):
         return 0
     return v
 
+def get_mins_maxs(columnName, df):
+    prev = None 
+    prevPrev = None 
+    peaks, valleys = [], []
+    for v in df[columnName]:
+        if prev == None or prevPrev == None:
+            pass
+        elif prev < prevPrev and prev < v:
+            valleys.append(prev)
+        elif prev > prevPrev and prev > v:
+            peaks.append(prev)
+        prevPrev = prev 
+        prev = v 
+    return peaks, valleys
+
+def peaks_variance(columnName, df):
+    peaks, valleys = get_mins_maxs(columnName, df)
+    return np.var(np.array(peaks + valleys)) 
+
+def peaks_diff(columnName, df):
+    peaks, valleys = get_mins_maxs(columnName, df)
+    avgPeak = sum(peaks) / len(peaks)
+    avgValley = sum(valleys) / len(valleys)
+    return avgPeak - avgValley
+
+
 # dictionary of feature functions to compute a statistic from a single compiled data point
 FEATURE_LIBRARY = {
     'AF3_max': lambda df: getMaxOfColumn(AF3, df),
@@ -114,7 +142,13 @@ FEATURE_LIBRARY = {
     'AF_adj_max_ratio': lambda df: (getMaxOfColumn(AF3, df) - median(AF3, df)) / (getMaxOfColumn(AF4, df) - median(AF4, df)),
     'AF_adj_max_diff': lambda df: (getMaxOfColumn(AF3, df) - median(AF3, df)) - (getMaxOfColumn(AF4, df) - median(AF4, df)),
     'AF3_kurtosis' : lambda df: kurtosis(AF3, df),
-    'AF4_kurtosis' : lambda df: kurtosis(AF4, df)
+    'AF4_kurtosis' : lambda df: kurtosis(AF4, df),
+    'AF3_sum': lambda df: df[AF3].sum(),
+    'AF4_sum': lambda df: df[AF4].sum(),
+    'AF3_peaks_var' : lambda df: peaks_variance(AF3, df),
+    'AF4_peaks_var' : lambda df: peaks_variance(AF4, df),
+    'AF3_peaks_diff' : lambda df: peaks_diff(AF3, df),
+    'AF4_peaks_diff' : lambda df: peaks_diff(AF4, df)
 }
 
 def getPathToCompiledDataSet(folderName, depth_from_src=1):

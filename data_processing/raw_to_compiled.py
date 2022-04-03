@@ -107,6 +107,21 @@ def parseData(dir_loc, groupings, label):
             rawData = pandas.read_csv(dataFile, skiprows=1, dtype=COLUMN_TYPES)
 
             prevMarker = ""
+
+            # first = rawData["Timestamp"].iloc[0]
+            # last = rawData["Timestamp"].iloc[-1]
+            # time = first 
+            # while time + 3 < last:
+            #     startTime = datetime.fromtimestamp(time)
+            #     endTime = startTime + timedelta(seconds=TIME_DELAY)
+            #     startTimeStamp = datetime.timestamp(startTime)
+            #     endTimeStamp = datetime.timestamp(endTime)
+            #     next3Seconds = rawData.loc[(rawData['Timestamp'] >= startTimeStamp) &
+            #         (rawData['Timestamp'] <= endTimeStamp)]
+            #     out.append(next3Seconds)
+            #     print(time)
+            #     time += 3
+
             for marker in markerData['Markers']:
                 if marker['label'] == 'invalid':
                     if prevMarker != 'invalid' and len(out):

@@ -95,14 +95,14 @@ class KeyboardApplication():
 
     # move right
     def on_right_wink(self, *args, **kwargs):
-        """
+        
         self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
         pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
         # special behavior for space button row
         effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
         self.buttons[self.focus_row][effective_col].focus_set()
-        """
-        self.horizontal = not self.horizontal
+        
+        # self.horizontal = not self.horizontal
 
     def on_key_press(self, event):
         # modify focus row and column according to key input
@@ -204,21 +204,20 @@ class KeyboardApplication():
         else:
             self.entry.insert(tkinter.END, value)
             
-def main(dispatcher):
+def main(dispatcher, events):
     root = tkinter.Tk()
     root.title('Keyboard')
     root['bg']='grey'
     root.resizable(0,0)
     root.wm_attributes("-topmost", "true")
     listener = KeyboardApplication(root)
-    root.mainloop()
-
     
     emitter = dispatcher
-
     emitter.bind(double_blink=listener.on_double_blink)
-    emitter.bind(left_wink=listener.on_left_wink)
+    emitter.bind(left_wink=listener.on_double_blink)
     emitter.bind(right_wink=listener.on_right_wink)
+
+    root.mainloop()
     
     
 if __name__ == '__main__':
