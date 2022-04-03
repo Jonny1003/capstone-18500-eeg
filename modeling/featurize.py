@@ -28,10 +28,12 @@ def getNthLargestOfColumn(columnName, n, dataframe):
     return topN.iloc[-1]
 
 def getPeaks(columnName, interval, dataframe):
+    # print(dataframe)
     '''gets peaks in every interval (in seconds) of the dataframe'''
     peaks = []
-    interval_start = dataframe.at[0, 'Timestamp']
+    interval_start = dataframe['Timestamp'].iloc[0]
     last_interval = dataframe['Timestamp'].iloc[-1]
+    # print("start:", interval_start, last_interval)
     while interval_start < last_interval:
         # print(interval_start)
         interval_end = interval_start + interval
@@ -46,6 +48,7 @@ def getPeaks(columnName, interval, dataframe):
         # print(peak)
         peaks.append(peak)
         interval_start = interval_end
+        # print("intervals:",interval_start, last_interval)
     return peaks
 
 def getNumAboveAveragePeaks(columnName, interval, dataframe):
@@ -54,7 +57,9 @@ def getNumAboveAveragePeaks(columnName, interval, dataframe):
        within the sample
     '''
     peaks = getPeaks(columnName, interval, dataframe)
-    # print(peaks)
+    # print('peaks', peaks)
+    if len(peaks) == 0:
+        return 0
     avg = sum(peaks) / len(peaks)
     sq_err = [(p - avg)**2 for p in peaks]
     stddev = np.sqrt(sum(sq_err) / len(peaks))
@@ -66,6 +71,8 @@ def getNumAboveAveragePeaks(columnName, interval, dataframe):
     return numHigher
 
 def variance(columnName, df):
+    if df.shape[0] <= 1:
+        return 0
     v = df[columnName].var()
     # print(v)
     return v

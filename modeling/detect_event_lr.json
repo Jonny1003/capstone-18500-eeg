@@ -13,7 +13,7 @@
     "proportion_training" : 0.7,
 
     "features_options" : "list of features from FEATURE_LIBRARY in featurize.py",
-    "features" : ["AF3_max", "AF4_max", "variance_AF3", "variance_AF4", "num_above_peaks_AF3", "num_above_peaks_AF4"],
+    "features" : ["AF3_max", "AF4_max"],
     
     "data_source_options" : "list of data sources in data/compiled",
     "data_sources" : ["blink", "left_wink", "right_wink", "baseline", "double_blink", "triple_blink"],

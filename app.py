@@ -90,6 +90,7 @@ def do_predict(**kwargs):
     dispatch = kwargs.get('dispatch')
 
     window = pandas.DataFrame(columns=EEG_LABELS)
+    prev_val = None
 
     while True:
         signalling_cond.acquire()
@@ -106,16 +107,21 @@ def do_predict(**kwargs):
         new_samples = pandas.DataFrame(new_samples, columns=EEG_LABELS)
         
         window = pandas.concat([window, new_samples])
-        if len(window.index) >= NUM_SAMPLES_IN_3_SEC:
+        if len(window.index) > NUM_SAMPLES_IN_3_SEC:
+            # start = window.index - NUM_SAMPLES_IN_3_SEC
             window = window.tail(NUM_SAMPLES_IN_3_SEC)
 
         res = model_predict(window)
-        print("Predicted: ", res)
-        val = res[0]
+        # print("Predicted: ", res)
+
+        val = res
+        if val != prev_val:
+            print(val)
         if val in EVENTS:
             dispatch.emit(val, val)
         else: 
             dispatch.emit('other', val)
+        prev_val = val
 
 def compute_feature_vector(model_params, window):
     vec = []
@@ -141,6 +147,10 @@ def initiate_model():
         v_base = compute_feature_vector(base_params, window)
         v_right = compute_feature_vector(right_wink_params, window)
         v_left = compute_feature_vector(left_wink_params, window)
+
+        # print(v_base)
+        # print(v_right)
+        # print(v_left)
 
         res1 = base.predict(v_base)
         # print(res1)
