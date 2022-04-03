@@ -21,7 +21,7 @@ HEADSET_ID = "INSIGHT-A2D2029A"
 CREDS_LOC = "/Users/jonathanke/Documents/CMU/18500/credentials/neurocontroller_creds"
 DEBUG = False
 
-MODEL_LOC_BASELINE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_event_lr.json"
+MODEL_LOC_BASELINE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/event_kurtosis_lr.json"
 MODEL_LOC_RIGHT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/right_wink_lr.json"
 MODEL_LOC_LEFT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/left_wink_lr.json"
 
@@ -117,7 +117,7 @@ def do_predict(**kwargs):
         val = res
         if val != prev_val:
             print(val)
-        if val in EVENTS:
+        if val in EVENTS and val != prev_val:
             dispatch.emit(val, val)
         else: 
             dispatch.emit('other', val)

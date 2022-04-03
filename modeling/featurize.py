@@ -80,6 +80,12 @@ def variance(columnName, df):
 def median(columnName, df):
     return df[columnName].median()
 
+def kurtosis(columnName, df):
+    v = df[columnName].kurtosis()
+    # print(v)
+    if pandas.isna(v):
+        return 0
+    return v
 
 # dictionary of feature functions to compute a statistic from a single compiled data point
 FEATURE_LIBRARY = {
@@ -106,7 +112,9 @@ FEATURE_LIBRARY = {
     'AF3_median': lambda df: median(AF3, df),
     'AF4_median': lambda df: median(AF4, df),
     'AF_adj_max_ratio': lambda df: (getMaxOfColumn(AF3, df) - median(AF3, df)) / (getMaxOfColumn(AF4, df) - median(AF4, df)),
-    'AF_adj_max_diff': lambda df: (getMaxOfColumn(AF3, df) - median(AF3, df)) - (getMaxOfColumn(AF4, df) - median(AF4, df))
+    'AF_adj_max_diff': lambda df: (getMaxOfColumn(AF3, df) - median(AF3, df)) - (getMaxOfColumn(AF4, df) - median(AF4, df)),
+    'AF3_kurtosis' : lambda df: kurtosis(AF3, df),
+    'AF4_kurtosis' : lambda df: kurtosis(AF4, df)
 }
 
 def getPathToCompiledDataSet(folderName, depth_from_src=1):
