@@ -84,14 +84,14 @@ class KeyboardApplication():
     PY_AUTO_DURATION = 0.5
 
     def on_left_wink(self, *args, **kwargs):
-        """
+        
         self.focus_col = max(0, self.focus_col - 1)
         pyautogui.moveRel(-self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
         # special behavior for space button row
         effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
         self.buttons[self.focus_row][effective_col].focus_set()
-        """
-        os.popen('open /System/Applications/Siri.app')
+        
+        # os.popen('open /System/Applications/Siri.app')
 
     # move right
     def on_right_wink(self, *args, **kwargs):
@@ -214,7 +214,7 @@ def main(dispatcher, events):
     
     emitter = dispatcher
     emitter.bind(double_blink=listener.on_double_blink)
-    emitter.bind(left_wink=listener.on_double_blink)
+    emitter.bind(left_wink=listener.on_left_wink)
     emitter.bind(right_wink=listener.on_right_wink)
 
     root.mainloop()

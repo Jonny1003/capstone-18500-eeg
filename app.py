@@ -24,6 +24,8 @@ DEBUG = False
 MODEL_LOC_BASELINE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/event_kurtosis_lr.json"
 MODEL_LOC_RIGHT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/right_wink_lr.json"
 MODEL_LOC_LEFT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/left_wink_lr.json"
+MODEL_LOC_NOISE_BASE = "/Users/jonathanke/Documents/CMU/18500/modeling/noise_vs_baseline_lr.json"
+MODEL_LOC_NOISE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/noise_vs_event_lr.json"
 
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
@@ -137,35 +139,50 @@ def initiate_model():
     base = joblib.load(MODEL_LOC_BASELINE_EVENT.replace('.json', '.joblib'))
     right_wink = joblib.load(MODEL_LOC_RIGHT_WINK.replace('.json', '.joblib'))
     left_wink = joblib.load(MODEL_LOC_LEFT_WINK.replace('.json', '.joblib'))
+    noise_base = joblib.load(MODEL_LOC_NOISE_BASE.replace('.json', '.joblib'))
+    noise_event = joblib.load(MODEL_LOC_NOISE_EVENT.replace('.json', '.joblib'))
+
+
     base_F = open(MODEL_LOC_BASELINE_EVENT)
     right_wink_F = open(MODEL_LOC_RIGHT_WINK)
     left_wink_F = open(MODEL_LOC_LEFT_WINK)
+    noise_base_F = open(MODEL_LOC_NOISE_BASE)
+    noise_event_F = open(MODEL_LOC_NOISE_EVENT)
+
     base_params = json.load(base_F)
     right_wink_params = json.load(right_wink_F)
     left_wink_params = json.load(left_wink_F)
+    noise_base_params = json.load(noise_base_F)
+    noise_event_params = json.load(noise_event_F)
     
     def model(window):
         # compute desired features
         v_base = compute_feature_vector(base_params, window)
         v_right = compute_feature_vector(right_wink_params, window)
         v_left = compute_feature_vector(left_wink_params, window)
+        v_noise_event = compute_feature_vector(noise_event_params, window)
 
         # print(v_base)
         # print(v_right)
         # print(v_left)
 
-        res1 = base.predict(v_base)
-        # print(res1)
-        if res1[0] == 'event':
-            # an event occured, check for right wink
-            R = right_wink.predict(v_right)
-            L = left_wink.predict(v_left)
-            if R[0] == 'right_wink':
-                return R[0]
-            elif L[0] == 'left_wink':
+        pred_noise_event = noise_event.predict(v_noise_event)
+        if pred_noise_event[0] == 'noise':
+            # too much noise to differentiate signals
+            return 'noisy'
+        else:
+            res1 = base.predict(v_base)
+            # print(res1)
+            if res1[0] == 'event':
+                # an event occured, check for right wink
+                R = right_wink.predict(v_right)
+                L = left_wink.predict(v_left)
+                if R[0] == 'right_wink':
+                    return R[0]
+                elif L[0] == 'left_wink':
+                    return L[0]
                 return L[0]
-            return L[0]
-        return 'none'
+            return 'none'
 
     return model
 

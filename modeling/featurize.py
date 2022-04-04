@@ -5,8 +5,10 @@ import pandas
 import numpy as np
 import sys
 from datetime import datetime, timedelta
-# from modeling.constants import *
-from constants import *
+# use this with app.py
+from modeling.constants import *
+# use this when running this file using modeling.
+# from constants import *
 
 # This file contains functions for generating feature vectors of a compiled data set.
 
@@ -110,6 +112,8 @@ def peaks_variance(columnName, df):
 
 def peaks_diff(columnName, df):
     peaks, valleys = get_mins_maxs(columnName, df)
+    if len(peaks) == 0 or len(valleys) == 0:
+        return 0
     avgPeak = sum(peaks) / len(peaks)
     avgValley = sum(valleys) / len(valleys)
     return avgPeak - avgValley
