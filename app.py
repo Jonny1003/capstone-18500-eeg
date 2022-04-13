@@ -7,6 +7,7 @@ import joblib
 import json
 import numpy as np
 import pandas
+import time
 from modeling.featurize import FEATURE_LIBRARY
 import frontend.sandbox.keyboard as keyboard
 
@@ -25,7 +26,9 @@ MODEL_LOC_BASELINE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/event
 MODEL_LOC_RIGHT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/right_wink_lr.json"
 MODEL_LOC_LEFT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/left_wink_lr.json"
 MODEL_LOC_NOISE_BASE = "/Users/jonathanke/Documents/CMU/18500/modeling/noise_vs_baseline_lr.json"
-MODEL_LOC_NOISE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/noise_vs_event_lr.json"
+MODEL_LOC_NOISE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_noise_lr.json"
+MODEL_LOC_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_blink_lr.json"
+MODEL_LOC_DOUBLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_double_blink_rf.json"
 
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
@@ -33,6 +36,9 @@ EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink')
 EEG_LABELS = [
   "Timestamp", "EEG.AF3","EEG.T7","EEG.Pz","EEG.T8","EEG.AF4"
 ]
+
+BLINKED_STATUS = 'blinked'
+MODEL_STATUSES = [BLINKED_STATUS]
 
 
 data_queue = Queue()
@@ -141,6 +147,9 @@ def initiate_model():
     left_wink = joblib.load(MODEL_LOC_LEFT_WINK.replace('.json', '.joblib'))
     noise_base = joblib.load(MODEL_LOC_NOISE_BASE.replace('.json', '.joblib'))
     noise_event = joblib.load(MODEL_LOC_NOISE_EVENT.replace('.json', '.joblib'))
+    blink = joblib.load(MODEL_LOC_BLINK.replace('.json', '.joblib'))
+    double_blink =  joblib.load(MODEL_LOC_DOUBLE_BLINK.replace('.json', '.joblib'))
+
 
 
     base_F = open(MODEL_LOC_BASELINE_EVENT)
@@ -148,12 +157,19 @@ def initiate_model():
     left_wink_F = open(MODEL_LOC_LEFT_WINK)
     noise_base_F = open(MODEL_LOC_NOISE_BASE)
     noise_event_F = open(MODEL_LOC_NOISE_EVENT)
+    blink_F = open(MODEL_LOC_BLINK)
+    double_blink_F = open(MODEL_LOC_DOUBLE_BLINK)
 
     base_params = json.load(base_F)
     right_wink_params = json.load(right_wink_F)
     left_wink_params = json.load(left_wink_F)
     noise_base_params = json.load(noise_base_F)
     noise_event_params = json.load(noise_event_F)
+    blink_params = json.load(blink_F)
+    double_blink_params = json.load(double_blink_F)
+
+    model_status = None 
+    model_status_timestamp = None
     
     def model(window):
         # compute desired features
@@ -161,6 +177,8 @@ def initiate_model():
         v_right = compute_feature_vector(right_wink_params, window)
         v_left = compute_feature_vector(left_wink_params, window)
         v_noise_event = compute_feature_vector(noise_event_params, window)
+        v_blink = compute_feature_vector(blink_params, window)
+        v_double_blink = compute_feature_vector(double_blink_params, window)
 
         # print(v_base)
         # print(v_right)
@@ -170,6 +188,16 @@ def initiate_model():
         if pred_noise_event[0] == 'noise':
             # too much noise to differentiate signals
             return 'noisy'
+        elif model_status == BLINKED_STATUS:
+            if time.time() > model_status_timestamp + 1:
+                # over a second has passed we do not care about 
+                # double blink anymore
+                model_status = None 
+                model_status_timestamp = None 
+                return 'none'
+            elif double_blink.predict(v_blink)[0] == 'double_blink':
+                # double blink occured
+                return 'double_blink'
         else:
             res1 = base.predict(v_base)
             # print(res1)
@@ -177,11 +205,18 @@ def initiate_model():
                 # an event occured, check for right wink
                 R = right_wink.predict(v_right)
                 L = left_wink.predict(v_left)
+                single = blink.predict(v_blink)
+                double = double_blink.predict(v_double_blink)
+                print(R, L, double)
                 if R[0] == 'right_wink':
                     return R[0]
                 elif L[0] == 'left_wink':
                     return L[0]
-                return L[0]
+                elif single[0] == 'blink':
+                    model_status = BLINKED_STATUS
+                    model_status_timestamp = time.time()
+                    return 'none'
+
             return 'none'
 
     return model
