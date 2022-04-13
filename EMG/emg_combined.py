@@ -6,7 +6,7 @@ def start_bluetooth():
     return bluetooth
 
 
-def detectEMG(dispatch, bluetooth):
+def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
     while 1:
         foundEnd = 0
         while (not foundEnd): #also check that the data is available
@@ -24,8 +24,10 @@ def detectEMG(dispatch, bluetooth):
             #     val = val + val_str
 
             if (data[0] == 'l'):
-                #event
                 data = int(data[1:])
+
+                #event 
+
                 dispatch.emit("left_emg", data)
                 print("In left", data)
         
@@ -40,36 +42,42 @@ def emgCalib(bluetooth):
     ################ calibration ##############
 
     bufSize = 5000
-    calibBuf = [1] * bufSize  # 5000 ints
+    calibBufRight = [1] * bufSize  # 5000 ints
+    calibBufLeft = [1] * bufSize  # 5000 ints
     stdCalib = 100            #dummyValue
     while (stdCalib > 0.5 or stdCalib == 100):
         i = 0
-        while i < bufSize:
+        j = 0
+        while i < bufSize and j < bufSize:
             EMG_value = bluetooth.readline()
             data = EMG_value.decode()
 
-            if (data[0] == 'l'):
-                #event
-                data = int(data[1:])
-        
-            elif (data[0] == 'r'):
-                #event
-                data = int(data[1:])
-
-            if (EMG_value != None):
-                value = EMG_value * 1024
-                print(EMG_value, value)
-                calibBuf[i] = value
+            if (data[0] == 'r'):
+                value = int(data[1:])
+                calibBufRight[i] = value
                 i += 1
+        
+            elif (data[0] == 'l'):
+                value = int(data[1:])
+                calibBufLeft[j] = value
+                j += 1
+
+            # if (EMG_value != None):
+            #     # value = EMG_value * 1024
+            #     print(EMG_value, value)
+            #     calibBuf[i] = value
+            #     i += 1
             #print(type(calibBuf[0]))
             #print("Calibrating value", calibBuf[i])
 
-        print(calibBuf)
+        # print(calibBuf)
         # print(type(calibBuf[0]))
-        stdCalib = np.std(calibBuf)
-        aveCalib = np.average(calibBuf)
+        stdR = np.std(calibBufRight)
+        aveR = np.average(calibBufRight)
+        stdL = np.std(calibBufLeft)
+        aveL = np.average(calibBufLeft)
     
-    return (stdCalib, aveCalib)
+    return [stdR, stdL, aveR,aveL]
 
 
 
