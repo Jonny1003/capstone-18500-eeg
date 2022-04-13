@@ -1,4 +1,4 @@
-from cortex import Cortex
+from cortex.cortex import Cortex
 
 if __name__ == '__main__':
 

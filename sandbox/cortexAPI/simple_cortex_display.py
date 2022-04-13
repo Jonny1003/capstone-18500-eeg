@@ -1,5 +1,5 @@
 import tkinter as tk
-import cortex 
+import cortex.cortex as cortex 
 
 CANVAS_WIDTH = 400
 CANVAS_HEIGHT = 400

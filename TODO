@@ -1,0 +1,16 @@
+1. refactor modeling code/folder
+    - create formal contract/object for each model
+    - should provide its own custom feature parse
+    - automate feature parse and model build in same step
+    - write out model and prediction accuracy as joblib file and text file 
+
+2. refactor featurize.py
+    - globalize feature library and utilities 
+    - featurizing functions should be associated with each model instead
+
+3. refactor cortex_poll
+    - cleaner model imports and model context loading needed
+    - cleaner realtime processing debug printing/monitoring
+    - send to keyboard needs contract 
+    
+4. add top level global startup code for main app

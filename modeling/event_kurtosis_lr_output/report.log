@@ -1,0 +1,5 @@
+Prediction Error: 0.0650887573964497
+Label distribution:
+	event: 950
+	baseline: 174
+ROC AUC Score: 0.9629988088147706

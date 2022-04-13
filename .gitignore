@@ -1,3 +1,2 @@
-
-# ignore private credentials for API access
+# ignore private credentials for API access (repo is public)
 credentials/*

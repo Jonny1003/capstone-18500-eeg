@@ -1,0 +1,31 @@
+{   
+    "model_options" : "rf or lr",
+    "model" : "lr",
+    
+    "rf_options" : "options passed into an rf model ignored if this model is not being selected",
+    "rf_max_depth" : 5,
+
+    "lr_options" : "options passed into an lr model, ignored if this model is not being selected",
+    "lr_max_iter" : 100,
+    "lr_solver" : "liblinear", 
+
+    "proportion_training_options" : "proportion to use as training data [0,1]",
+    "proportion_training" : 0.7,
+
+    "features_options" : "list of features from FEATURE_LIBRARY in featurize.py",
+    "features" : ["AF3_max", "AF4_max", "AF3_peaks_diff", "AF4_peaks_diff"],
+    
+    "data_source_options" : "list of data sources in data/compiled",
+    "data_sources" : ["blink", "left_wink", "right_wink", "double_blink", "triple_blink", "noise"],
+
+    "label_mapping_options" : 
+        "dictionary of mappings between provided sources and the designated label, if no mapping is provided, the label is defaulted to the one in the compiled data set",
+        "label_mapping" : {
+            "blink" : "none",
+            "left_wink": "none",
+            "right_wink" : "none", 
+            "double_blink" : "none",
+            "triple_blink" : "none",
+            "noise": "noise"
+        }
+}
