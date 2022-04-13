@@ -10,6 +10,7 @@ import pandas
 import time
 from modeling.featurize import FEATURE_LIBRARY
 import frontend.sandbox.keyboard as keyboard
+import EMG.emg_combined
 
 # get sklearn to stop printing warnings
 import warnings
@@ -32,7 +33,7 @@ MODEL_LOC_DOUBLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_
 
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
-EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink')
+EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink', 'left_emg', 'right_emg')
 EEG_LABELS = [
   "Timestamp", "EEG.AF3","EEG.T7","EEG.Pz","EEG.T8","EEG.AF4"
 ]
@@ -221,10 +222,23 @@ def initiate_model():
 
     return model
 
-if __name__ == '__main__':
-    model = initiate_model()
-    instance = startup()
+def detectEMGWrap(**kwargs):
+    dispatch = kwargs.get('dispatch')
+    bt = kwargs.get('bt')
+    EMG.emg_combined.detectEMG(dispatch, bt)
 
+
+if __name__ == '__main__':
+
+    # startup eeg
+    model = initiate_model()
+    cortex_instance = startup()
+
+    # startup emg
+    bt = EMG.emg_combined.start_bluetooth()
+    EMG.emg_combined.emgCalib(bt)
+
+    # begin application
     dispatch = Dispatcher()
     
     for e in EVENTS:
@@ -236,7 +250,7 @@ if __name__ == '__main__':
         group=None, 
         target=setup_data_polling, 
         name='data_poll', 
-        kwargs={'cortex':instance, 'cond':signalling_cond},
+        kwargs={'cortex':cortex_instance, 'cond':signalling_cond},
         daemon=True 
     )
     predictor = threading.Thread(
@@ -246,8 +260,18 @@ if __name__ == '__main__':
         kwargs={'cond':signalling_cond, 'model':model, 'dispatch':dispatch},
         daemon=True
     )
+    emg_detector = threading.Thread(
+        group=None,
+        target=detectEMGWrap,
+        name='emg detector',
+        kwargs={'dispatch':dispatch, 'bt':bt},
+        daemon=True
+    )
+
+    # begin executing threads
     data_poll.start()
     predictor.start()
+    emg_detector.start()
 
     keyboard.main(dispatch, event_queue)
 
