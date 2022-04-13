@@ -1,3 +1,3 @@
 # ignore private credentials for API access (repo is public)
 credentials/
-*/.DS_Store
+*.DS_Store
