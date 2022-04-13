@@ -26,15 +26,6 @@ class FeaturePredictor(Dispatcher):
                 self.emit('right_wink', data=data)
 """
 
-# # trying to open application on chrome
-# import webbrowser
-
-# url = 'http://docs.python.org/'
-# chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
-
-# webbrowser.get(chrome_path).open(url)
-
-
 class KeyboardApplication():
     BUTTON_TEXTS = [
         ['`','1','2','3','4','5','6','7','8','9','0','-','=','Delete'],
@@ -103,6 +94,38 @@ class KeyboardApplication():
         self.buttons[self.focus_row][effective_col].focus_set()
         
         # self.horizontal = not self.horizontal
+
+    def on_left_emg(self, *args, **kwargs):
+        if self.horizontal:
+            #left
+            self.focus_col = max(0, self.focus_col - 1)
+            pyautogui.moveRel(-self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
+        else:
+            #down
+            self.focus_row = min(len(self.BUTTON_TEXTS) - 1, self.focus_row + 1)
+            pyautogui.moveRel(0, self.PY_AUTO_DISTANCE, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
+
+    def on_right_emg(self, *args, **kwargs):
+        if self.horizontal:
+            #right
+            self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
+            pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
+        else:
+            #up
+            self.focus_row = max(0, self.focus_row - 1)
+            pyautogui.moveRel(0, -self.PY_AUTO_DISTANCE, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
 
     def on_key_press(self, event):
         # modify focus row and column according to key input
@@ -216,6 +239,8 @@ def main(dispatcher, events):
     emitter.bind(double_blink=listener.on_double_blink)
     emitter.bind(left_wink=listener.on_left_wink)
     emitter.bind(right_wink=listener.on_right_wink)
+    emitter.bind(left_emg=listener.on_left_emg)
+    emitter.bind(right_emg=listener.on_right_emg)
 
     root.mainloop()
     
