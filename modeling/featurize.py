@@ -70,7 +70,7 @@ def getNumAboveAveragePeaks(columnName, interval, dataframe):
     numHigher = 0
     for v in peaks:
         # get only the really high peaks
-        if v > avg + 2 * stddev:
+        if v > avg + 1.5 * stddev:
             numHigher += 1
     return numHigher
 
@@ -106,6 +106,15 @@ def get_mins_maxs(columnName, df):
         prev = v 
     return peaks, valleys
 
+def get_second_max(columnName, df):
+    peaks, _ = get_mins_maxs(columnName, df)
+    first = getMaxOfColumn(columnName, df)
+    out = 0
+    for v in peaks:
+        if v > out and v < first:
+            out = v
+    return out 
+
 def peaks_variance(columnName, df):
     peaks, valleys = get_mins_maxs(columnName, df)
     return np.var(np.array(peaks + valleys)) 
@@ -117,6 +126,58 @@ def peaks_diff(columnName, df):
     avgPeak = sum(peaks) / len(peaks)
     avgValley = sum(valleys) / len(valleys)
     return avgPeak - avgValley
+
+def sumTop2Peaks(columnName, df):
+    peaks = getPeaks(columnName, .5, df)
+    largest = max(peaks)
+    sec_largest = 0
+    for v in peaks:
+        if v > sec_largest and v < largest:
+            sec_largest = v
+    return sec_largest/largest
+
+def smooth(columnName, df, n):
+    v = df.rolling(n).mean()
+    # print(v)
+    return v 
+
+def get_maxes_tossed(columnName, df, threshold):
+    prev = None 
+    prevPrev = None 
+    data = []
+    for v in df[columnName]:
+        if prev == None or prevPrev == None:
+            pass
+        elif prev < prevPrev and prev < v:
+            data.append(prev)
+        elif prev > prevPrev and prev > v:
+            data.append(prev)
+        prevPrev = prev 
+        prev = v 
+    out = []
+    for i,curr in enumerate(data):
+        if i > 0 and i < len(data)-1:
+            prev = data[i-1]
+            next = data[i+1]
+            if curr > prev and curr > next:
+                # peak 
+                if not (abs(curr-prev) < threshold and abs(curr-next) < threshold):
+                    out.append(curr)
+    return out
+
+def get_smooth_second_max(columnName, df, threshold):
+    df = smooth(columnName, df, 15)
+    peaks = get_maxes_tossed(columnName, df, threshold)
+    if len(peaks) == 0:
+        # don't care to compute peak... (below threshold)
+        return df[columnName].median()
+    first = max(peaks)
+    out = 0
+    for v in peaks:
+        if v > out and v < first:
+            out = v
+    return out 
+
 
 
 # dictionary of feature functions to compute a statistic from a single compiled data point
@@ -133,7 +194,6 @@ FEATURE_LIBRARY = {
     'AF3_mean': lambda df: getMeanOfColumn(AF3, df),
     'AF4_mean': lambda df: getMeanOfColumn(AF4, df),
     'Pz_mean': lambda df: getMeanOfColumn(PZ, df),
-    'peaks': lambda df: getPeaks(AF3, .25, df),
     'num_above_peaks_AF3': lambda df: getNumAboveAveragePeaks(AF3, .1, df),
     'num_above_peaks_AF4': lambda df: getNumAboveAveragePeaks(AF4, .1, df),
     'variance_AF3': lambda df: variance(AF3, df),
@@ -145,6 +205,8 @@ FEATURE_LIBRARY = {
     'AF4_median': lambda df: median(AF4, df),
     'AF_adj_max_ratio': lambda df: (getMaxOfColumn(AF3, df) - median(AF3, df)) / (getMaxOfColumn(AF4, df) - median(AF4, df)),
     'AF_adj_max_diff': lambda df: (getMaxOfColumn(AF3, df) - median(AF3, df)) - (getMaxOfColumn(AF4, df) - median(AF4, df)),
+    'AF3_sum_2_peaks': lambda df: sumTop2Peaks(AF3, df),
+    'AF4_sum_2_peaks': lambda df: sumTop2Peaks(AF4, df),
     'AF3_kurtosis' : lambda df: kurtosis(AF3, df),
     'AF4_kurtosis' : lambda df: kurtosis(AF4, df),
     'AF3_sum': lambda df: df[AF3].sum(),
@@ -152,7 +214,11 @@ FEATURE_LIBRARY = {
     'AF3_peaks_var' : lambda df: peaks_variance(AF3, df),
     'AF4_peaks_var' : lambda df: peaks_variance(AF4, df),
     'AF3_peaks_diff' : lambda df: peaks_diff(AF3, df),
-    'AF4_peaks_diff' : lambda df: peaks_diff(AF4, df)
+    'AF4_peaks_diff' : lambda df: peaks_diff(AF4, df),
+    'AF3_second_max' : lambda df: get_second_max(AF3, df),
+    'AF4_second_max' : lambda df: get_second_max(AF4, df),
+    'AF3_smooth_second_max' : lambda df: get_smooth_second_max(AF3, df, 100),
+    'AF4_smooth_second_max' : lambda df: get_smooth_second_max(AF4, df, 200)  
 }
 
 def getPathToCompiledDataSet(folderName, depth_from_src=1):
