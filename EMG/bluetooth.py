@@ -4,7 +4,6 @@ bluetooth = serial.Serial(port='/dev/tty.DSDTECHHC-05', baudrate=9600)
 print("Connected!!!!!!!!!!")
 
 
-
 def detectEMG():
 
     while 1:

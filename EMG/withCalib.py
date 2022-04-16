@@ -15,7 +15,7 @@ A0_analog = board.get_pin('a:0:i')   #input pin A0
 bufSize = 5000
 calibBuf = [1] * bufSize  # 5000 ints
 stdCalib = 100            #dummyValue
-while (stdCalib > 0.5 or stdCalib == 100):
+while (stdCalib > 0.5):
     i = 0
     while i < bufSize:
         EMG_value = A0_analog.read()

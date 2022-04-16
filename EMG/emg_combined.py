@@ -7,60 +7,83 @@ def start_bluetooth():
 
 
 def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
+    rightBuf = [0] * 200
+    leftBuf = [0] * 200
+
     while 1:
-        foundEnd = 0
-        while (not foundEnd): #also check that the data is available
-            data_bytes = bluetooth.readline()
-            data = data_bytes.decode()
-            
-
-            ####################### for reading per byte ###################
-            #print(input_data.decode())
-            #print(type(data))
-            # if input_data == b'\n':
-            #     foundEnd = 1
-            # else:
-            #     val_str = input_data.decode()
-            #     val = val + val_str
-
-            if (data[0] == 'l'):
-                data = int(data[1:])
-
-                #event 
-
-                dispatch.emit("left_emg", data)
-                print("In left", data)
+        #also check that the data is available
+        data_bytes = bluetooth.readline()
+        data = data_bytes.decode()
         
-            elif (data[0] == 'r'):
-                #event
-                data = int(data[1:])
-                dispatch.emit("right_emg", data)
-                print("in right", data)
+
+        ####################### for reading per byte ###################
+        #print(input_data.decode())
+        #print(type(data))
+        # if input_data == b'\n':
+        #     foundEnd = 1
+        # else:
+        #     val_str = input_data.decode()
+        #     val = val + val_str
+
+        if (data[0] == 'r'):
+            data = int(data[1:])
+            rightBuf[offsetR] = data
+            offsetR += 1
+
+            #check every time the buf is filled
+            if (offsetR == bufSize-1):
+                stdDataR = np.std(rightBuf)
+                aveDataR = np.ave(rightBuf)
+                ratioR = aveDataR / aveR
+                #event 
+                if (stdDataR > 2 and ratioR > 2.5):
+                    dispatch.emit("right_emg", data)
+                offsetR = 0 #reset the offset
+
+                #print("In left", data)
+            
+    
+        elif (data[0] == 'l'):
+            data = int(data[1:])
+            leftBuf[offsetL] = data
+            offsetL += 1
+            
+            #check every time the buf is filled
+            if (offsetL == bufSize-1):
+                stdDataL = np.std(leftBuf)
+                aveDataL = np.ave(leftBuf)
+                ratioL = aveDataL / aveL
+                #event 
+                if (stdR > 2 and ratioR > 2.5):
+                    dispatch.emit("right_emg", data)
+                offsetL = 0 #reset the offset
+            
+            print("in right", data)
 
 
 def emgCalib(bluetooth):
     ################ calibration ##############
 
     bufSize = 5000
-    calibBufRight = [1] * bufSize  # 5000 ints
-    calibBufLeft = [1] * bufSize  # 5000 ints
+    calibBufRight = [0] * bufSize  # 5000 ints
+    calibBufLeft = [0] * bufSize  # 5000 ints
     stdCalib = 100            #dummyValue
-    while (stdCalib > 0.5 or stdCalib == 100):
-        i = 0
-        j = 0
-        while i < bufSize and j < bufSize:
+    while (stdR > 0.5 or stdL > 0.5):
+        rightIdx = 0
+        leftIdx = 0
+        while rightIdx < bufSize and leftIdx < bufSize:
             EMG_value = bluetooth.readline()
             data = EMG_value.decode()
 
             if (data[0] == 'r'):
                 value = int(data[1:])
-                calibBufRight[i] = value
-                i += 1
+                calibBufRight[rightIdx] = value
+                rightIdx += 1
         
             elif (data[0] == 'l'):
                 value = int(data[1:])
-                calibBufLeft[j] = value
-                j += 1
+                calibBufLeft[leftIdx] = value
+                leftIdx += 1
 
             # if (EMG_value != None):
             #     # value = EMG_value * 1024
@@ -77,7 +100,7 @@ def emgCalib(bluetooth):
         stdL = np.std(calibBufLeft)
         aveL = np.average(calibBufLeft)
     
-    return [stdR, stdL, aveR,aveL]
+    return [stdR, stdL, aveR, aveL]
 
 
 
