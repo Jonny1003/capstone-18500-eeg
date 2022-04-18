@@ -7,12 +7,15 @@ def start_bluetooth():
 
 
 def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
+
     rightBuf = [0] * 200
     leftBuf = [0] * 200
 
     while 1:
         #also check that the data is available
         data_bytes = bluetooth.readline()
+        
+
         data = data_bytes.decode()
         
 
@@ -71,9 +74,12 @@ def emgCalib(bluetooth):
     while (stdR > 0.5 or stdL > 0.5):
         rightIdx = 0
         leftIdx = 0
+        print("hi~")
         while rightIdx < bufSize and leftIdx < bufSize:
             EMG_value = bluetooth.readline()
+            
             data = EMG_value.decode()
+            print(data)
 
             if (data[0] == 'r'):
                 value = int(data[1:])
