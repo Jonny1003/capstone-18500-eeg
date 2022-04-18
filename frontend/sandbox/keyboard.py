@@ -2,6 +2,10 @@ import tkinter
 import pyautogui
 import os
 from pydispatch import Dispatcher
+from pynput import mouse, keyboard
+
+import time
+
 
 """
 class FeaturePredictor(Dispatcher):
@@ -28,17 +32,17 @@ class FeaturePredictor(Dispatcher):
 
 class KeyboardApplication():
     BUTTON_TEXTS = [
-        ['`','1','2','3','4','5','6','7','8','9','0','-','=','Delete'],
+        ['Cursor','1','2','3','4','5','6','7','8','9','0','-','=','Delete'],
         ['Tab','q','w','e','r','t','y','u','i','o','p','[',']','\\',],
         ['Shift','a','s','d','f','g','h','j','k','l',';',"'",'Enter'],
-        ['z','x','c','v','b','n','m',',','.','/','Cursor','Siri'],
+        ['z','x','c','v','b','n','m',',','.','/','`','Siri'],
         ['Space']
     ]
     BUTTON_TEXTS_SHIFT = [
-        ['~','!','@','#','$','%','^','&','*','(',')','-','=','Delete'],
+        ['Cursor','!','@','#','$','%','^','&','*','(',')','-','=','Delete'],
         ['Tab','Q','W','E','R','T','Y','U','I','O','P','{','}','|'],
         ['Shift','A','S','D','F','G','H','J','K','L',':','"','Enter'],
-        ['Z','X','C','V','B','N','M','<','>','?','Cursor','Siri'],
+        ['Z','X','C','V','B','N','M','<','>','?','~','Siri'],
         ['Space']
     ]
 
@@ -66,10 +70,20 @@ class KeyboardApplication():
         self.buttons[0][0].focus_set()
         self.parent.bind('<KeyPress>', self.on_key_press)
 
+        # initialize mouse and keyboard controllers
+        self.mouse_controller = mouse.Controller()
+        self.keyboard_controller = keyboard.Controller()
+
     def on_double_blink(self, *args, **kwargs):
         # special behavior for space button row
         effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
         self.buttons[self.focus_row][effective_col].invoke()
+
+    # TODO: add an event
+    def on_triple_blink(self, *args, **kwargs):
+        self.mouse_controllers(keyboard.Button.left)
+        self.mouse_controllers.release(keyboard.Button.left)
+
 
     PY_AUTO_DISTANCE = 0
     PY_AUTO_DURATION = 0.5
@@ -145,6 +159,8 @@ class KeyboardApplication():
             self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
             pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
         """
+
+        print(event.keysym)
 
         # simulate left shoulder and right shoulder
         if event.keysym == 'Left':
@@ -225,6 +241,10 @@ class KeyboardApplication():
         elif value == 'Siri':
             os.popen('open /System/Applications/Siri.app')
         else:
+            print("button", value)
+            self.keyboard_controller.press(value)
+            self.keyboard_controller.release(value)
+
             self.entry.insert(tkinter.END, value)
             
 def main(dispatcher, events):
