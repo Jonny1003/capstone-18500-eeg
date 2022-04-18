@@ -1,6 +1,11 @@
 import tkinter
 import pyautogui
+import os
 from pydispatch import Dispatcher
+from pynput import mouse, keyboard
+
+import time
+
 
 """
 class FeaturePredictor(Dispatcher):
@@ -27,69 +32,120 @@ class FeaturePredictor(Dispatcher):
 
 class KeyboardApplication():
     BUTTON_TEXTS = [
-        ['`','1','2','3','4','5','6','7','8','9','0','-','=','Delete'],
+        ['Cursor','1','2','3','4','5','6','7','8','9','0','-','=','Delete'],
         ['Tab','q','w','e','r','t','y','u','i','o','p','[',']','\\',],
         ['Shift','a','s','d','f','g','h','j','k','l',';',"'",'Enter'],
-        ['z','x','c','v','b','n','m',',','.','/','Cursor'],
+        ['z','x','c','v','b','n','m',',','.','/','`','Siri'],
         ['Space']
     ]
     BUTTON_TEXTS_SHIFT = [
-        ['~','!','@','#','$','%','^','&','*','(',')','-','=','Delete'],
+        ['Cursor','!','@','#','$','%','^','&','*','(',')','-','=','Delete'],
         ['Tab','Q','W','E','R','T','Y','U','I','O','P','{','}','|'],
         ['Shift','A','S','D','F','G','H','J','K','L',':','"','Enter'],
-        ['Z','X','C','V','B','N','M','<','>','?','Cursor'],
+        ['Z','X','C','V','B','N','M','<','>','?','~','Siri'],
         ['Space']
     ]
 
     def __init__(self, parent):
-        # initialize keyboard attributes
-        self.parent = parent
-        self.buttons = []
-        self.focus_row = 0
-        self.focus_col = 0
-        self.is_shift = False
-        self.display_cursor = True # test
-
         # initialize keyboard layout
         self.label = tkinter.Label(parent, text='Keyboard', font=('arial', 30, 'bold'), bg='grey') 
         self.label.grid(row = 0, columnspan = 15)
         self.entry = tkinter.Text(parent, width = 100, height = 10, font = ('arial', 20, 'bold'))
         self.entry.grid(row = 1, columnspan = 15)
 
+        # initialize keyboard attributes
+        self.parent = parent
+        self.buttons = [] # list of tkinter Buttons
+        self.focus_row = 0
+        self.focus_col = 0
+        self.is_shift = False # whether the shift modifier is active
+        
+        self.display_cursor = False # initialize display_cursor
+        self.set_cursor(True) # set display_cursor value
+        
+        self.horizontal = False # default mapping for shoulder directions
+
         # initialize buttons
         self.display_buttons()
         self.buttons[0][0].focus_set()
         self.parent.bind('<KeyPress>', self.on_key_press)
 
-        # hide cursor when it is over the keyboard window
-        self.update_cursor()
+        # initialize mouse and keyboard controllers
+        self.mouse_controller = mouse.Controller()
+        self.keyboard_controller = keyboard.Controller()
 
     def on_double_blink(self, *args, **kwargs):
         # special behavior for space button row
         effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
         self.buttons[self.focus_row][effective_col].invoke()
 
+    # TODO: add an event
+    def on_triple_blink(self, *args, **kwargs):
+        self.mouse_controllers(keyboard.Button.left)
+        self.mouse_controllers.release(keyboard.Button.left)
+
+
     PY_AUTO_DISTANCE = 0
     PY_AUTO_DURATION = 0.5
 
     def on_left_wink(self, *args, **kwargs):
+        
         self.focus_col = max(0, self.focus_col - 1)
         pyautogui.moveRel(-self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
         # special behavior for space button row
         effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
         self.buttons[self.focus_row][effective_col].focus_set()
+        
+        # os.popen('open /System/Applications/Siri.app')
 
+    # move right
     def on_right_wink(self, *args, **kwargs):
+        
         self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
         pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
         # special behavior for space button row
         effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
         self.buttons[self.focus_row][effective_col].focus_set()
+        
+        # self.horizontal = not self.horizontal
+
+    def on_left_emg(self, *args, **kwargs):
+        if self.horizontal:
+            #left
+            self.focus_col = max(0, self.focus_col - 1)
+            pyautogui.moveRel(-self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
+        else:
+            #down
+            self.focus_row = min(len(self.BUTTON_TEXTS) - 1, self.focus_row + 1)
+            pyautogui.moveRel(0, self.PY_AUTO_DISTANCE, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
+
+    def on_right_emg(self, *args, **kwargs):
+        if self.horizontal:
+            #right
+            self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
+            pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
+        else:
+            #up
+            self.focus_row = max(0, self.focus_row - 1)
+            pyautogui.moveRel(0, -self.PY_AUTO_DISTANCE, self.PY_AUTO_DURATION)
+            # special behavior for space button row
+            effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
+            self.buttons[self.focus_row][effective_col].focus_set()
 
     def on_key_press(self, event):
         # modify focus row and column according to key input
 
         # handle keyboard arrows
+        """
         if event.keysym == 'Up':
             self.focus_row = max(0, self.focus_row - 1)
             pyautogui.moveRel(0, -self.PY_AUTO_DISTANCE, self.PY_AUTO_DURATION)
@@ -102,6 +158,21 @@ class KeyboardApplication():
         elif event.keysym == 'Right':
             self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
             pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+        """
+
+        print(event.keysym)
+
+        # simulate left shoulder and right shoulder
+        if event.keysym == 'Left':
+            if self.horizontal:
+                self.focus_col = max(0, self.focus_col - 1)
+            else:
+                self.focus_row = min(len(self.BUTTON_TEXTS) - 1, self.focus_row + 1)
+        elif event.keysym == 'Right':
+            if self.horizontal:
+                self.focus_col = min(len(self.BUTTON_TEXTS[self.focus_row]) - 1, self.focus_col + 1)
+            else:
+                self.focus_row = max(0, self.focus_row - 1)
             
         # special behavior for space button row
         effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
@@ -113,13 +184,17 @@ class KeyboardApplication():
         # set focus according to new focus row and col
         self.buttons[self.focus_row][effective_col].focus_set()
 
-    def update_cursor(self):
+    def set_cursor(self, val):
+        self.display_cursor = val
         if self.display_cursor:
             self.parent.config(cursor='left_ptr')
             self.entry.config(cursor='xterm')
         else:
             self.parent.config(cursor='none')
             self.entry.config(cursor='none')
+        
+    def toggle_cursor(self):
+        self.set_cursor(not self.display_cursor)
 
     def display_buttons(self):
         # delete existing button objects
@@ -162,24 +237,33 @@ class KeyboardApplication():
             self.is_shift = not self.is_shift
             self.display_buttons()
         elif value == 'Cursor':
-            self.display_cursor = not self.display_cursor
-            self.update_cursor()
+            self.toggle_cursor()
+        elif value == 'Siri':
+            os.popen('open /System/Applications/Siri.app')
         else:
+            print("button", value)
+            self.keyboard_controller.press(value)
+            self.keyboard_controller.release(value)
+
             self.entry.insert(tkinter.END, value)
             
-def main(emitter):
+def main(dispatcher, events):
     root = tkinter.Tk()
     root.title('Keyboard')
     root['bg']='grey'
     root.resizable(0,0)
+    root.wm_attributes("-topmost", "true")
     listener = KeyboardApplication(root)
-
-    emitter.bind(blink=listener.on_double_blink)
+    
+    emitter = dispatcher
+    emitter.bind(double_blink=listener.on_double_blink)
     emitter.bind(left_wink=listener.on_left_wink)
     emitter.bind(right_wink=listener.on_right_wink)
+    emitter.bind(left_emg=listener.on_left_emg)
+    emitter.bind(right_emg=listener.on_right_emg)
+
     root.mainloop()
     
-
+    
 if __name__ == '__main__':
     main()
-
