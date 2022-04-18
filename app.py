@@ -222,7 +222,7 @@ def initiate_model():
 
     return model
 
-def detectEMGWrap(**kwargs):
+def detectEMGThread(**kwargs):
     dispatch = kwargs.get('dispatch')
     bt = kwargs.get('bt')
     EMG.emg_combined.detectEMG(dispatch, bt)
@@ -262,7 +262,7 @@ if __name__ == '__main__':
     )
     emg_detector = threading.Thread(
         group=None,
-        target=detectEMGWrap,
+        target=detectEMGThread,
         name='emg detector',
         kwargs={'dispatch':dispatch, 'bt':bt},
         daemon=True
@@ -277,12 +277,3 @@ if __name__ == '__main__':
 
     data_poll.join()
     print("Cortex polling has exited! Terminating program...")
-    
-
-
-    
-
-
-
-
-
