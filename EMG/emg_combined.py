@@ -74,7 +74,6 @@ def emgCalib(bluetooth):
     while (stdR > 0.5 or stdL > 0.5):
         rightIdx = 0
         leftIdx = 0
-        print("hi~")
         while rightIdx < bufSize and leftIdx < bufSize:
             EMG_value = bluetooth.readline()
             
