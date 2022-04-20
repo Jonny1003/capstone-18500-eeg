@@ -87,8 +87,10 @@ def emgCalib(bluetooth):
         # print("entered second while")
         while rightIdx < bufSize:
             EMG_value = bluetooth.readline()
+            
             data = EMG_value.decode()
-            # print(data)
+
+            print(data)
 
             if (data[0] == 'r'):
                 value = int(data[1:])
