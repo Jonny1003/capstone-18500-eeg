@@ -140,6 +140,9 @@ def compute_feature_vector(model_params, window):
         vec.append((FEATURE_LIBRARY[f])(window))
     return np.array(vec).reshape(1,-1)
 
+model_status = None 
+model_status_timestamp = None
+
 def initiate_model():
     '''create the final model here'''
 
@@ -169,8 +172,6 @@ def initiate_model():
     blink_params = json.load(blink_F)
     double_blink_params = json.load(double_blink_F)
 
-    model_status = None 
-    model_status_timestamp = None
     
     def model(window):
         # compute desired features
@@ -222,10 +223,15 @@ def initiate_model():
 
     return model
 
-def detectEMGWrap(**kwargs):
+def detectEMGThread(**kwargs):
     dispatch = kwargs.get('dispatch')
     bt = kwargs.get('bt')
-    EMG.emg_combined.detectEMG(dispatch, bt)
+    emg_params = kwargs.get('emg_params')
+    stdR = emg_params[0]
+    stdL = emg_params[1]
+    aveR = emg_params[2]
+    aveL = emg_params[3]
+    EMG.emg_combined.detectEMG(dispatch, bt, stdR, stdL, aveR, aveL)
 
 
 if __name__ == '__main__':
@@ -236,7 +242,7 @@ if __name__ == '__main__':
 
     # startup emg
     bt = EMG.emg_combined.start_bluetooth()
-    EMG.emg_combined.emgCalib(bt)
+    emg_params = EMG.emg_combined.emgCalib(bt)
 
     # begin application
     dispatch = Dispatcher()
@@ -262,9 +268,9 @@ if __name__ == '__main__':
     )
     emg_detector = threading.Thread(
         group=None,
-        target=detectEMGWrap,
+        target=detectEMGThread,
         name='emg detector',
-        kwargs={'dispatch':dispatch, 'bt':bt},
+        kwargs={'dispatch':dispatch, 'bt':bt, 'emg_params':emg_params},
         daemon=True
     )
 
@@ -277,12 +283,3 @@ if __name__ == '__main__':
 
     data_poll.join()
     print("Cortex polling has exited! Terminating program...")
-    
-
-
-    
-
-
-
-
-
