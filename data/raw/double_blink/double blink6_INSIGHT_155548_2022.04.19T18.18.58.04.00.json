@@ -1,0 +1,271 @@
+{
+    "Markers": [
+        {
+            "endDatetime": "2022-04-19T18:19:16.167674-04:00",
+            "extras": {
+            },
+            "index": 1,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:16.167817-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:16.167817-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:16.167674-04:00",
+            "type": "instance",
+            "uuid": "9040eb43-ed48-419b-aa6b-07db46fef884",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:19:21.122104-04:00",
+            "extras": {
+            },
+            "index": 2,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:21.120135-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:21.120135-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:21.122104-04:00",
+            "type": "instance",
+            "uuid": "7f082554-b4ca-4cb9-a6e6-ee3ebbc7bb1c",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:19:26.678254-04:00",
+            "extras": {
+            },
+            "index": 3,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:26.674816-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:26.674816-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:26.678254-04:00",
+            "type": "instance",
+            "uuid": "e47a002a-0af3-47e3-9907-1e2f1e5313e5",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:19:32.484471-04:00",
+            "extras": {
+            },
+            "index": 4,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:32.484631-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:32.484631-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:32.484471-04:00",
+            "type": "instance",
+            "uuid": "4083ef94-b2e5-4627-9421-baca5952485f",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:19:38.743932-04:00",
+            "extras": {
+            },
+            "index": 5,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:38.746135-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:38.746135-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:38.743932-04:00",
+            "type": "instance",
+            "uuid": "9d153f98-32d6-418f-9fa3-d89c2cd4605f",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:19:44.432931-04:00",
+            "extras": {
+            },
+            "index": 6,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:44.434225-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:44.434225-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:44.432931-04:00",
+            "type": "instance",
+            "uuid": "f0d53518-68d2-4dd0-87f1-0fef7a22332b",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:19:49.551466-04:00",
+            "extras": {
+            },
+            "index": 7,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:49.550183-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:49.550183-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:49.551466-04:00",
+            "type": "instance",
+            "uuid": "4e1365a4-f965-48b2-b70a-9fa5842a9ec1",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:19:55.732782-04:00",
+            "extras": {
+            },
+            "index": 8,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:19:55.732512-04:00",
+            "originalStartDatetime": "2022-04-19T18:19:55.732512-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:19:55.732782-04:00",
+            "type": "instance",
+            "uuid": "44e43e74-2140-4dea-8b93-ced08389b7ca",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:20:01.382707-04:00",
+            "extras": {
+            },
+            "index": 9,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:20:01.381948-04:00",
+            "originalStartDatetime": "2022-04-19T18:20:01.381948-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:20:01.382707-04:00",
+            "type": "instance",
+            "uuid": "a26073b4-f785-40a1-b49c-e3610e759b42",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:20:07.087335-04:00",
+            "extras": {
+            },
+            "index": 10,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:20:07.084095-04:00",
+            "originalStartDatetime": "2022-04-19T18:20:07.084095-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:20:07.087335-04:00",
+            "type": "instance",
+            "uuid": "2d45cf3c-c320-477d-a0e9-5c5dfade1d9a",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:20:12.940439-04:00",
+            "extras": {
+            },
+            "index": 11,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:20:12.937344-04:00",
+            "originalStartDatetime": "2022-04-19T18:20:12.937344-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:20:12.940439-04:00",
+            "type": "instance",
+            "uuid": "4c3ca966-b4d1-4f45-bc22-00c31f080c5d",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:20:18.246524-04:00",
+            "extras": {
+            },
+            "index": 12,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:20:18.243421-04:00",
+            "originalStartDatetime": "2022-04-19T18:20:18.243421-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:20:18.246524-04:00",
+            "type": "instance",
+            "uuid": "7daee756-5224-4185-bfcd-19bb588f38b8",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:20:23.685456-04:00",
+            "extras": {
+            },
+            "index": 13,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:20:23.685455-04:00",
+            "originalStartDatetime": "2022-04-19T18:20:23.685455-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:20:23.685456-04:00",
+            "type": "instance",
+            "uuid": "56960d76-5c64-42f1-a366-ae8ded0e682b",
+            "value": 3,
+            "value_type": "number"
+        },
+        {
+            "endDatetime": "2022-04-19T18:20:29.319753-04:00",
+            "extras": {
+            },
+            "index": 14,
+            "label": "double blink",
+            "originalEndDatetime": "2022-04-19T18:20:29.316977-04:00",
+            "originalStartDatetime": "2022-04-19T18:20:29.316977-04:00",
+            "port": "KeyStroke",
+            "startDatetime": "2022-04-19T18:20:29.319753-04:00",
+            "type": "instance",
+            "uuid": "1a30a179-9c7d-4ccf-a5c7-99312f82d929",
+            "value": 3,
+            "value_type": "number"
+        }
+    ],
+    "connectionType": "dongle",
+    "demographics": {
+        "birthday": "1900-01-01",
+        "countryOfInfluence": {
+            "iso": "",
+            "printable": ""
+        },
+        "countryOfResidence": {
+            "iso": "",
+            "printable": ""
+        },
+        "gender": "U"
+    },
+    "exportApp": "com.emotiv.emotivpro",
+    "exportTime": "2022-04-19T19:34:38.434-04:00",
+    "eyeActions": {
+        "Blink": 10,
+        "Look Left": -1,
+        "Look Right": 1,
+        "Neutral": 0,
+        "Wink Left": 11,
+        "Wink Right": 12
+    },
+    "facialExpressionActions": {
+        "Blink": 2,
+        "Clench Teeth": 256,
+        "Furrow Brows": 64,
+        "Horizontal Eye": 16,
+        "Laugh": 512,
+        "Neutral": 1,
+        "Raise Brows": 32,
+        "Smile": 128,
+        "Smirk Left": 1024,
+        "Smirk Right": 2048,
+        "Wink Left": 4,
+        "Wink Right": 8
+    },
+    "headsetType": "INSIGHT",
+    "mappings": null,
+    "mentalCommandActions": {
+        "Disappear": 8192,
+        "Drop": 16,
+        "Left": 32,
+        "Lift": 8,
+        "Neutral": 1,
+        "Pull": 4,
+        "Push": 2,
+        "Right": 64,
+        "Rotate Backward": 4096,
+        "Rotate Clockwise": 512,
+        "Rotate Counter-Clockwise": 1024,
+        "Rotate Forward": 2048,
+        "Rotate Left": 128,
+        "Rotate Right": 256
+    },
+    "recordId": "b6a64754-1c59-4c52-97ca-e4c2e1c867bc",
+    "user": "jon1003"
+}

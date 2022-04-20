@@ -29,7 +29,7 @@ MODEL_LOC_LEFT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/left_wink_
 MODEL_LOC_NOISE_BASE = "/Users/jonathanke/Documents/CMU/18500/modeling/noise_vs_baseline_lr.json"
 MODEL_LOC_NOISE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_noise_lr.json"
 MODEL_LOC_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_blink_lr.json"
-MODEL_LOC_DOUBLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_double_blink_rf.json"
+MODEL_LOC_DOUBLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_double_blink_rf_strict.json"
 
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
@@ -140,8 +140,8 @@ def compute_feature_vector(model_params, window):
         vec.append((FEATURE_LIBRARY[f])(window))
     return np.array(vec).reshape(1,-1)
 
-model_status = None 
-model_status_timestamp = None
+model_status = [None]
+model_status_timestamp = [None]
 
 def initiate_model():
     '''create the final model here'''
@@ -190,14 +190,15 @@ def initiate_model():
         if pred_noise_event[0] == 'noise':
             # too much noise to differentiate signals
             return 'noisy'
-        elif model_status == BLINKED_STATUS:
-            if time.time() > model_status_timestamp + 1:
+        elif model_status[0] == BLINKED_STATUS:
+            if time.time() > model_status_timestamp[0] + 1:
+                # print(time.time(), model_status_timestamp[0])
                 # over a second has passed we do not care about 
                 # double blink anymore
-                model_status = None 
-                model_status_timestamp = None 
+                model_status[0] = None 
+                model_status_timestamp[0] = None 
                 return 'none'
-            elif double_blink.predict(v_blink)[0] == 'double_blink':
+            elif double_blink.predict(v_double_blink)[0] == 'double_blink':
                 # double blink occured
                 return 'double_blink'
         else:
@@ -209,14 +210,15 @@ def initiate_model():
                 L = left_wink.predict(v_left)
                 single = blink.predict(v_blink)
                 double = double_blink.predict(v_double_blink)
-                print(R, L, double)
-                if R[0] == 'right_wink':
+                # print(R, L, double)
+                if R[0] == 'right_wink' and single[0] != 'blink' \
+                    and L[0] != 'left_wink':
                     return R[0]
                 elif L[0] == 'left_wink':
                     return L[0]
                 elif single[0] == 'blink':
-                    model_status = BLINKED_STATUS
-                    model_status_timestamp = time.time()
+                    model_status[0] = BLINKED_STATUS
+                    model_status_timestamp[0] = time.time()
                     return 'none'
 
             return 'none'

@@ -260,7 +260,8 @@ def main(dispatcher, events):
     emitter.bind(left_wink=listener.on_left_wink)
     emitter.bind(right_wink=listener.on_right_wink)
     emitter.bind(left_emg=listener.on_left_emg)
-    emitter.bind(right_emg=listener.on_right_emg)
+    # emitter.bind(right_emg=listener.on_right_emg)
+    emitter.bind(right_emg=listener.on_left_wink)
 
     root.mainloop()
     

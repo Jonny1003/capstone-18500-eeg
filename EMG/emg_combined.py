@@ -1,5 +1,6 @@
 import serial
 import numpy as np
+import time 
 # import pydispatch import Dispatcher
 
 def start_bluetooth():
@@ -11,7 +12,7 @@ def start_bluetooth():
 
 
 def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
-    bufSize = 200
+    bufSize = 50
     rightBuf = [0] * bufSize
     leftBuf = [0] * bufSize
     offsetR = 0
@@ -40,11 +41,12 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
             #check every time the buf is filled
             if (offsetR == bufSize-1):
                 stdDataR = np.std(rightBuf)
-                aveDataR = np.ave(rightBuf)
+                aveDataR = np.average(rightBuf)
                 ratioR = aveDataR / aveR
                 #event 
-                if (stdDataR > 2 and ratioR > 2.5):
+                if (stdDataR > 2 and ratioR > 1.5):
                     dispatch.emit("right_emg", data)
+                    print("right emg event")
                 offsetR = 0 #reset the offset
 
                 #print("In left", data)
@@ -76,8 +78,10 @@ def emgCalib(bluetooth):
     calibBufLeft = [0] * bufSize  # 5000 ints
     #stdCalib = 100            #dummyValue
     stdR = 100
+    aveR = 10000
     #stdL = 100
-    while (stdR > 20):
+    print("Start time:", time.time())
+    while (stdR > 20 and aveR > 300):
         rightIdx = 0
         leftIdx = 0
         # print("entered second while")
@@ -114,6 +118,7 @@ def emgCalib(bluetooth):
 
     stdL = 0
     aveL = 0
+    print("End time:", time.time())
 
     return [stdR, stdL, aveR, aveL]
 
