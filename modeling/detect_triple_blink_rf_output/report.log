@@ -1,0 +1,4 @@
+Prediction Error: 0.17222222222222222
+Label distribution:
+	triple_blink: 277
+	double_blink: 321

@@ -176,7 +176,20 @@ def get_smooth_second_max(columnName, df, threshold):
     for v in peaks:
         if v > out and v < first:
             out = v
-    return out 
+    return out
+
+def get_smooth_third_max(columnName, df, threshold):
+    df = smooth(columnName, df, 15)
+    peaks = get_maxes_tossed(columnName, df, threshold)
+    if len(peaks) == 0:
+        # don't care to compute peak... (below threshold)
+        return df[columnName].median()
+    second = get_smooth_second_max(columnName, df, threshold) 
+    out = 0
+    for v in peaks:
+        if v > out and v < second:
+            out = v
+    return out
 
 
 
@@ -218,7 +231,13 @@ FEATURE_LIBRARY = {
     'AF3_second_max' : lambda df: get_second_max(AF3, df),
     'AF4_second_max' : lambda df: get_second_max(AF4, df),
     'AF3_smooth_second_max' : lambda df: get_smooth_second_max(AF3, df, 100),
-    'AF4_smooth_second_max' : lambda df: get_smooth_second_max(AF4, df, 200)  
+    'AF4_smooth_second_max' : lambda df: get_smooth_second_max(AF4, df, 200),
+    'AF3_smooth_third_max' : lambda df: get_smooth_third_max(AF3, df, 80),
+    'AF4_smooth_third_max' : lambda df: get_smooth_third_max(AF4, df, 80),
+    'AF3_third_max_ratio' : lambda df: get_smooth_third_max(AF3, df, 80)/ getMaxOfColumn(AF3, df),
+    'AF4_third_max_ratio' : lambda df: get_smooth_third_max(AF4, df, 80)/ getMaxOfColumn(AF4, df),
+    'AF3_second_max_ratio' : lambda df: get_smooth_second_max(AF3, df, 100)/ getMaxOfColumn(AF3, df),
+    'AF4_second_max_ratio' : lambda df: get_smooth_second_max(AF4, df, 200)/ getMaxOfColumn(AF4, df)
 }
 
 def getPathToCompiledDataSet(folderName, depth_from_src=1):

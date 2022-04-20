@@ -1,5 +1,5 @@
-Prediction Error: 0.11764705882352941
+Prediction Error: 0.11242603550295859
 Label distribution:
-	none: 513
-	double_blink: 223
-ROC AUC Score: 0.9436140018921475
+	none: 805
+	double_blink: 321
+ROC AUC Score: 0.9182943843739101

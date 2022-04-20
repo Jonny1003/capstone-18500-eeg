@@ -25,11 +25,13 @@ DEBUG = False
 
 MODEL_LOC_BASELINE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/event_kurtosis_lr.json"
 MODEL_LOC_RIGHT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/right_wink_lr.json"
-MODEL_LOC_LEFT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/left_wink_lr.json"
+MODEL_LOC_LEFT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/left_wink_rf.json"
 MODEL_LOC_NOISE_BASE = "/Users/jonathanke/Documents/CMU/18500/modeling/noise_vs_baseline_lr.json"
 MODEL_LOC_NOISE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_noise_lr.json"
 MODEL_LOC_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_blink_lr.json"
-MODEL_LOC_DOUBLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_double_blink_rf_strict.json"
+MODEL_LOC_DOUBLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_double_blink_rf.json"
+MODEL_LOC_TRIPLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_triple_blink_rf.json"
+MODEL_LOC_LEFT_VS_RIGHT = "/Users/jonathanke/Documents/CMU/18500/modeling/left_vs_right_lr.json" 
 
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
@@ -153,7 +155,8 @@ def initiate_model():
     noise_event = joblib.load(MODEL_LOC_NOISE_EVENT.replace('.json', '.joblib'))
     blink = joblib.load(MODEL_LOC_BLINK.replace('.json', '.joblib'))
     double_blink =  joblib.load(MODEL_LOC_DOUBLE_BLINK.replace('.json', '.joblib'))
-
+    triple_blink =  joblib.load(MODEL_LOC_TRIPLE_BLINK.replace('.json', '.joblib'))   
+    left_vs_right =  joblib.load(MODEL_LOC_LEFT_VS_RIGHT.replace('.json', '.joblib'))  
 
 
     base_F = open(MODEL_LOC_BASELINE_EVENT)
@@ -163,6 +166,8 @@ def initiate_model():
     noise_event_F = open(MODEL_LOC_NOISE_EVENT)
     blink_F = open(MODEL_LOC_BLINK)
     double_blink_F = open(MODEL_LOC_DOUBLE_BLINK)
+    triple_blink_F = open(MODEL_LOC_TRIPLE_BLINK)
+    left_vs_right_F = open(MODEL_LOC_LEFT_VS_RIGHT)
 
     base_params = json.load(base_F)
     right_wink_params = json.load(right_wink_F)
@@ -171,6 +176,8 @@ def initiate_model():
     noise_event_params = json.load(noise_event_F)
     blink_params = json.load(blink_F)
     double_blink_params = json.load(double_blink_F)
+    triple_blink_params = json.load(triple_blink_F)
+    left_vs_right_params = json.load(left_vs_right_F)
 
     
     def model(window):
@@ -181,6 +188,8 @@ def initiate_model():
         v_noise_event = compute_feature_vector(noise_event_params, window)
         v_blink = compute_feature_vector(blink_params, window)
         v_double_blink = compute_feature_vector(double_blink_params, window)
+        v_left_vs_right = compute_feature_vector(left_vs_right_params, window)
+        v_triple = compute_feature_vector(triple_blink, window)
 
         # print(v_base)
         # print(v_right)
@@ -208,13 +217,14 @@ def initiate_model():
                 # an event occured, check for right wink
                 R = right_wink.predict(v_right)
                 L = left_wink.predict(v_left)
+                LR = left_vs_right.predict(v_left_vs_right)
                 single = blink.predict(v_blink)
                 double = double_blink.predict(v_double_blink)
                 # print(R, L, double)
-                if R[0] == 'right_wink' and single[0] != 'blink' \
-                    and L[0] != 'left_wink':
+                if R[0] == 'right_wink' and L[0] != 'left_wink' \
+                    and LR[0] == 'right_wink':
                     return R[0]
-                elif L[0] == 'left_wink':
+                elif L[0] == 'left_wink' and LR[0] == 'left_wink':
                     return L[0]
                 elif single[0] == 'blink':
                     model_status[0] = BLINKED_STATUS

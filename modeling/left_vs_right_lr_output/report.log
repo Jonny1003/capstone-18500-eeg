@@ -1,0 +1,5 @@
+Prediction Error: 0.0
+Label distribution:
+	left_wink: 232
+	right_wink: 223
+ROC AUC Score: 1.0

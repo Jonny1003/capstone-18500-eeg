@@ -1,4 +1,4 @@
-Prediction Error: 0.058823529411764705
+Prediction Error: 0.09467455621301775
 Label distribution:
-	none: 513
-	double_blink: 223
+	none: 805
+	double_blink: 321
