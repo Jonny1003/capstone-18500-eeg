@@ -52,8 +52,8 @@ class KeyboardApplication():
     # either a left click in mouse mode or a key press in keyboard mode
     def on_double_blink(self, *args, **kwargs):
         if self.mouse_mode:
-            self.mouse_controllers(keyboard.Button.left)
-            self.mouse_controllers.release(keyboard.Button.left)
+            self.mouse_controller.click(mouse.Button.left)
+            self.mouse_controller.release(mouse.Button.left)
         else:
             # special behavior for space button row
             effective_col = 0 if self.focus_row == len(self.buttons) - 1 else self.focus_col
@@ -61,8 +61,8 @@ class KeyboardApplication():
 
     # right click
     def on_triple_blink(self, *args, **kwargs):
-        self.mouse_controllers(keyboard.Button.right)
-        self.mouse_controllers.release(keyboard.Button.right)
+        self.mouse_controller.click(mouse.Button.right)
+        self.mouse_controller.release(mouse.Button.right)
 
     PY_AUTO_DISTANCE = 0
     PY_AUTO_DURATION = 0.5
@@ -202,8 +202,6 @@ class KeyboardApplication():
         elif value == 'Shift':
             self.is_shift = not self.is_shift
             self.display_buttons()
-        elif value == 'Cursor':
-            self.toggle_cursor()
         elif value == 'Siri':
             os.popen('open /System/Applications/Siri.app')
         else:

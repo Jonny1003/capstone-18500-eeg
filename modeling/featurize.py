@@ -6,9 +6,9 @@ import numpy as np
 import sys
 from datetime import datetime, timedelta
 # use this with app.py
-# from modeling.constants import *
+from modeling.constants import *
 # use this when running this file using modeling.
-from constants import *
+# from constants import *
 
 # This file contains functions for generating feature vectors of a compiled data set.
 

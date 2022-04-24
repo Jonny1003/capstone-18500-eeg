@@ -103,6 +103,7 @@ class Cortex(Dispatcher):
 
         if self.debug:
             print(json.dumps(result_dic, indent=4))
+        
 
         if result_dic.get('result') != None:
             access_granted =  result_dic['result']['accessGranted']
@@ -137,6 +138,7 @@ class Cortex(Dispatcher):
                 if result_dic['id'] == AUTHORIZE_ID:
                     if self.debug:
                         print('auth result \n', json.dumps(result_dic, indent=4))
+
                     self.auth = result_dic['result']['cortexToken']
                     break
 

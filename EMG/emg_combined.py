@@ -13,7 +13,7 @@ def start_bluetooth():
 
 def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
 
-    bufSize = 50
+    bufSize = 200
     rightBuf = [0] * bufSize
     leftBuf = [0] * bufSize
     offsetR = 0
@@ -36,16 +36,19 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
 
         if (data[0] == 'r'):
             data = int(data[1:])
+            print('R', data)
             rightBuf[offsetR] = data
             offsetR += 1
 
             #check every time the buf is filled
             if (offsetR == bufSize-1):
                 stdDataR = np.std(rightBuf)
-                aveDataR = np.ave(rightBuf)
+                aveDataR = np.average(rightBuf)
                 ratioR = aveDataR / aveR
+                print(ratioR)
                 #event 
-                if (stdDataR > 20 and ratioR > 2.5):
+                if (stdDataR > 20 and ratioR > 1.5):
+                    print('right_emg')
                     dispatch.emit("right_emg", data)
                 offsetR = 0 #reset the offset
 
@@ -56,14 +59,19 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
             data = int(data[1:])
             leftBuf[offsetL] = data
             offsetL += 1
+
+            print('L', data)
+
             
             #check every time the buf is filled
             if (offsetL == bufSize-1):
                 stdDataL = np.std(leftBuf)
-                aveDataL = np.ave(leftBuf)
+                aveDataL = np.average(leftBuf)
                 ratioL = aveDataL / aveL
+                print(ratioL)
                 #event 
-                if (stdR > 20 and ratioR > 2.5):
+                if (stdR > 20 and ratioR > 1.5):
+                    print('left_emg')
                     dispatch.emit("left_emg", data)
                 offsetL = 0 #reset the offset
             
@@ -79,7 +87,7 @@ def emgCalib(bluetooth):
     #stdCalib = 100            #dummyValue
     stdR = 100
     stdL = 100
-    while (stdR > 20 and stdL > 20):
+    while (stdR > 40 and stdL > 40):
         rightIdx = 0
         leftIdx = 0
 
@@ -88,7 +96,7 @@ def emgCalib(bluetooth):
             
             data = EMG_value.decode()
 
-            print(data)
+            # print(data)
 
             if (data[0] == 'r'):
                 value = int(data[1:])

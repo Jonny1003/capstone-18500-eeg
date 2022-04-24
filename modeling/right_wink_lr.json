@@ -16,7 +16,7 @@
     "features" : ["AF3_max", "AF4_max", "AF_adj_max_diff", "AF_adj_max_ratio"],
     
     "data_source_options" : "list of data sources in data/compiled",
-    "data_sources" : ["blink", "left_wink", "right_wink"],
+    "data_sources" : ["blink",  "right_wink"],
 
     "label_mapping_options" : 
         "dictionary of mappings between provided sources and the designated label, if no mapping is provided, the label is defaulted to the one in the compiled data set",

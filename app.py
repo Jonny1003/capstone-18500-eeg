@@ -1,4 +1,5 @@
 from cortex.cortex import Cortex
+from modeling.constants import AF3
 from pydispatch import Dispatcher
 from queue import Queue
 import random
@@ -24,7 +25,7 @@ CREDS_LOC = "/Users/jonathanke/Documents/CMU/18500/credentials/neurocontroller_c
 DEBUG = False
 
 MODEL_LOC_BASELINE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/event_kurtosis_lr.json"
-MODEL_LOC_RIGHT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/right_wink_lr.json"
+MODEL_LOC_RIGHT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/right_wink_lr_strict.json"
 MODEL_LOC_LEFT_WINK = "/Users/jonathanke/Documents/CMU/18500/modeling/left_wink_rf.json"
 MODEL_LOC_NOISE_BASE = "/Users/jonathanke/Documents/CMU/18500/modeling/noise_vs_baseline_lr.json"
 MODEL_LOC_NOISE_EVENT = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_noise_lr.json"
@@ -35,7 +36,7 @@ MODEL_LOC_LEFT_VS_RIGHT = "/Users/jonathanke/Documents/CMU/18500/modeling/left_v
 
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
-EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink', 'left_emg', 'right_emg')
+EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink', 'left_emg', 'right_emg', 'triple_blink')
 EEG_LABELS = [
   "Timestamp", "EEG.AF3","EEG.T7","EEG.Pz","EEG.T8","EEG.AF4"
 ]
@@ -104,6 +105,7 @@ def do_predict(**kwargs):
 
     window = pandas.DataFrame(columns=EEG_LABELS)
     prev_val = None
+    wait = 0
 
     while True:
         signalling_cond.acquire()
@@ -128,9 +130,16 @@ def do_predict(**kwargs):
         # print("Predicted: ", res)
 
         val = res
-        if val != prev_val:
+        if val != prev_val and wait + 1.5 < time.time():
             print(val)
-        if val in EVENTS and val != prev_val:
+            # af3_mean = window["EEG.AF3"].median()
+            # af4_mean = window["EEG.AF4"].median()
+            # window.loc[:,'EEG.AF3'] = af3_mean 
+            # window.loc[:, 'EEG.AF4'] = af4_mean
+            # print(window)
+        if val in EVENTS and val != prev_val \
+            and wait + 1.5 < time.time():
+            wait = time.time()
             dispatch.emit(val, val)
         else: 
             dispatch.emit('other', val)
@@ -189,7 +198,7 @@ def initiate_model():
         v_blink = compute_feature_vector(blink_params, window)
         v_double_blink = compute_feature_vector(double_blink_params, window)
         v_left_vs_right = compute_feature_vector(left_vs_right_params, window)
-        v_triple = compute_feature_vector(triple_blink, window)
+        v_triple = compute_feature_vector(triple_blink_params, window)
 
         # print(v_base)
         # print(v_right)
@@ -198,6 +207,8 @@ def initiate_model():
         pred_noise_event = noise_event.predict(v_noise_event)
         if pred_noise_event[0] == 'noise':
             # too much noise to differentiate signals
+            model_status[0] = None 
+            model_status_timestamp[0] = None 
             return 'noisy'
         elif model_status[0] == BLINKED_STATUS:
             if time.time() > model_status_timestamp[0] + 1:
@@ -210,6 +221,9 @@ def initiate_model():
             elif double_blink.predict(v_double_blink)[0] == 'double_blink':
                 # double blink occured
                 return 'double_blink'
+            # elif triple_blink.predict(v_triple)[0] == 'triple_blink':
+            #     return 'triple_blink'
+            return 'none'
         else:
             res1 = base.predict(v_base)
             # print(res1)
@@ -219,7 +233,7 @@ def initiate_model():
                 L = left_wink.predict(v_left)
                 LR = left_vs_right.predict(v_left_vs_right)
                 single = blink.predict(v_blink)
-                double = double_blink.predict(v_double_blink)
+                # double = double_blink.predict(v_double_blink)
                 # print(R, L, double)
                 if R[0] == 'right_wink' and L[0] != 'left_wink' \
                     and LR[0] == 'right_wink':
@@ -253,8 +267,8 @@ if __name__ == '__main__':
     cortex_instance = startup()
 
     # startup emg
-    bt = EMG.emg_combined.start_bluetooth()
-    emg_params = EMG.emg_combined.emgCalib(bt)
+    # bt = EMG.emg_combined.start_bluetooth()
+    # emg_params = EMG.emg_combined.emgCalib(bt)
 
     # begin application
     dispatch = Dispatcher()
@@ -278,18 +292,18 @@ if __name__ == '__main__':
         kwargs={'cond':signalling_cond, 'model':model, 'dispatch':dispatch},
         daemon=True
     )
-    emg_detector = threading.Thread(
-        group=None,
-        target=detectEMGThread,
-        name='emg detector',
-        kwargs={'dispatch':dispatch, 'bt':bt, 'emg_params':emg_params},
-        daemon=True
-    )
+    # emg_detector = threading.Thread(
+    #     group=None,
+    #     target=detectEMGThread,
+    #     name='emg detector',
+    #     kwargs={'dispatch':dispatch, 'bt':bt, 'emg_params':emg_params},
+    #     daemon=True
+    # )
 
     # begin executing threads
     data_poll.start()
     predictor.start()
-    emg_detector.start()
+    # emg_detector.start()
 
     keyboard.main(dispatch, event_queue)
 
