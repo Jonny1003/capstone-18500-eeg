@@ -1,0 +1,5 @@
+Prediction Error: 0.07317073170731707
+Label distribution:
+	right_wink: 223
+	none: 321
+ROC AUC Score: 0.9601715686274509

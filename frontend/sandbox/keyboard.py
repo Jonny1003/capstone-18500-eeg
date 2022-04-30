@@ -1,5 +1,7 @@
 import tkinter
+import tkmacosx
 import pyautogui
+import multiprocessing
 import os
 from pydispatch import Dispatcher
 from pynput import mouse, keyboard
@@ -37,7 +39,7 @@ class KeyboardApplication():
         self.is_shift = False # whether the shift modifier is active
         
         # orientation of controls
-        self.horizontal = False # default mapping for shoulder directions
+        self.horizontal = True # default mapping for shoulder directions
         self.mouse_mode = True
 
         # initialize buttons
@@ -64,12 +66,13 @@ class KeyboardApplication():
         self.mouse_controller.click(mouse.Button.right)
         self.mouse_controller.release(mouse.Button.right)
 
-    PY_AUTO_DISTANCE = 0
-    PY_AUTO_DURATION = 0.5
+    PY_AUTO_DISTANCE = 10
+    PY_AUTO_DURATION = .05
 
     # toggle between mouse mode and keyboard mode
     def on_left_wink(self, *args, **kwargs):
-        self.mouse_mode = not self.mouse_mode
+        # self.mouse_mode = not self.mouse_mode
+        print("Mouse mode:", self.mouse_mode)
 
     # toggle between horizontal controls and vertical controls
     def on_right_wink(self, *args, **kwargs):
@@ -77,10 +80,14 @@ class KeyboardApplication():
 
     def on_left_emg(self, *args, **kwargs):
         if self.mouse_mode:
-            if self.horizontal:
+            print('left move!')
+            if self.horizontal and pyautogui.position()[0] >= 0:
                 pyautogui.moveRel(-self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
+                # self.mouse_controller.move(-self.PY_AUTO_DISTANCE, 0)
             else:
+                print('move down')
                 pyautogui.moveRel(0, self.PY_AUTO_DISTANCE, self.PY_AUTO_DURATION)
+                # self.mouse_controller.move(0, self.PY_AUTO_DISTANCE)
         else:
             if self.horizontal:
                 #left
@@ -99,10 +106,18 @@ class KeyboardApplication():
 
     def on_right_emg(self, *args, **kwargs):
         if self.mouse_mode:
+            print('right move!')
             if self.horizontal:
+                print(self.mouse_controller.position)
                 pyautogui.moveRel(self.PY_AUTO_DISTANCE, 0, self.PY_AUTO_DURATION)
-            else:
+                # self.mouse_controller.move(self.PY_AUTO_DISTANCE, 0)
+                print(self.mouse_controller.position)
+            elif pyautogui.position()[1] >= 0:
+                print('move up')
+                print(self.mouse_controller.position)
                 pyautogui.moveRel(0, -self.PY_AUTO_DISTANCE, self.PY_AUTO_DURATION)
+                # self.mouse_controller.move(0, -self.PY_AUTO_DISTANCE)
+                print(self.mouse_controller.position)
         else:
             if self.horizontal:
                 #right
@@ -177,12 +192,12 @@ class KeyboardApplication():
                 button_text = button_texts[row][col]
                 command = lambda x = button_text: self.handle_button(x)
                 if button_text == 'Space':
-                    button = tkinter.Button(self.parent, text = button_text, width = 80, height = 4, 
+                    button = tkmacosx.Button(self.parent, text = button_text, width = 800, height = 40, 
                         bg = 'grey', fg = '#000000', relief = 'raised', padx = 4, pady = 4, bd = 4, 
                         font = ('arial', 12, 'bold'), command = command)
                     button.grid(row = 7, columnspan = 14)
                 else:
-                    button = tkinter.Button(self.parent, text = button_text, width = 5, height = 4, 
+                    button = tkmacosx.Button(self.parent, text = button_text, width = 50, height = 40, 
                         bg = 'grey', fg = '#000000', relief = 'raised', padx = 4, pady = 4, bd = 4, 
                         font = ('arial', 12, 'bold'), command = command)
                     button.grid(row = row + 3, column = col)
@@ -223,16 +238,24 @@ def main(dispatcher, events):
     listener = KeyboardApplication(root)
     
     emitter = dispatcher
-    emitter.bind(double_blink=listener.on_double_blink)
-    emitter.bind(left_wink=listener.on_left_wink)
-    emitter.bind(right_wink=listener.on_right_wink)
+
+    #Official bindings
+    # emitter.bind(double_blink=listener.on_double_blink)
+    emitter.bind(left_wink=listener.on_right_wink)
+    emitter.bind(right_wink=listener.on_double_blink)
     emitter.bind(left_emg=listener.on_left_emg)
-    # emitter.bind(right_emg=listener.on_right_emg)
-    emitter.bind(right_emg=listener.on_left_wink)
+    emitter.bind(right_emg=listener.on_right_emg)
+    # emitter.bind(right_emg=listener.on_left_wink)
     emitter.bind(triple_blink=listener.on_triple_blink)
+
+    # # temporary bindings
+    # emitter.bind(left_wink=listener.on_left_emg)
+    # emitter.bind(right_wink=listener.on_right_emg)
+    # # emitter.bind(triple_blink=listener.on_left_wink)
+    # emitter.bind(double_blink=listener.on_double_blink)
 
     root.mainloop()
     
     
 if __name__ == '__main__':
-    main()
+    main(None, None)

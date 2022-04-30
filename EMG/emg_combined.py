@@ -1,5 +1,6 @@
 import serial
 import numpy as np
+import time
 # import pydispatch import Dispatcher
 
 
@@ -13,7 +14,7 @@ def start_bluetooth():
 
 def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
 
-    bufSize = 200
+    bufSize = 10
     rightBuf = [0] * bufSize
     leftBuf = [0] * bufSize
     offsetR = 0
@@ -36,7 +37,7 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
 
         if (data[0] == 'r'):
             data = int(data[1:])
-            print('R', data)
+            # print('R', data)
             rightBuf[offsetR] = data
             offsetR += 1
 
@@ -45,9 +46,9 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
                 stdDataR = np.std(rightBuf)
                 aveDataR = np.average(rightBuf)
                 ratioR = aveDataR / aveR
-                print(ratioR)
+                # print("Ratio R", ratioR)
                 #event 
-                if (stdDataR > 20 and ratioR > 1.5):
+                if (stdDataR > 20 and ratioR > 2):
                     print('right_emg')
                     dispatch.emit("right_emg", data)
                 offsetR = 0 #reset the offset
@@ -56,11 +57,12 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
             
     
         elif (data[0] == 'l'):
+            # print(data)
             data = int(data[1:])
             leftBuf[offsetL] = data
             offsetL += 1
 
-            print('L', data)
+            # print('L', data)
 
             
             #check every time the buf is filled
@@ -68,9 +70,9 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
                 stdDataL = np.std(leftBuf)
                 aveDataL = np.average(leftBuf)
                 ratioL = aveDataL / aveL
-                print(ratioL)
+                # print("Ratio L", ratioL)
                 #event 
-                if (stdR > 20 and ratioR > 1.5):
+                if (stdDataL > 20 and ratioL > 1.3):
                     print('left_emg')
                     dispatch.emit("left_emg", data)
                 offsetL = 0 #reset the offset
@@ -87,6 +89,7 @@ def emgCalib(bluetooth):
     #stdCalib = 100            #dummyValue
     stdR = 100
     stdL = 100
+    print(time.time())
     while (stdR > 40 and stdL > 40):
         rightIdx = 0
         leftIdx = 0
@@ -119,6 +122,6 @@ def emgCalib(bluetooth):
         stdL = np.std(calibBufLeft)
         aveL = np.average(calibBufLeft)
         print("Left:", stdL, aveL)
-
+    print(time.time())
     return [stdR, stdL, aveR, aveL]
 

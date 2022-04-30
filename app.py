@@ -1,9 +1,12 @@
+import multiprocessing
 from cortex.cortex import Cortex
-from modeling.constants import AF3
+from modeling.constants import AF3, AF4
 from pydispatch import Dispatcher
 from queue import Queue
 import random
 import threading
+import pyautogui
+
 import joblib
 import json
 import numpy as np
@@ -33,9 +36,15 @@ MODEL_LOC_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_blink_l
 MODEL_LOC_DOUBLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_double_blink_rf.json"
 MODEL_LOC_TRIPLE_BLINK = "/Users/jonathanke/Documents/CMU/18500/modeling/detect_triple_blink_rf.json"
 MODEL_LOC_LEFT_VS_RIGHT = "/Users/jonathanke/Documents/CMU/18500/modeling/left_vs_right_lr.json" 
+MODEL_LOC_RIGHT_VS_DOUBLE = "/Users/jonathanke/Documents/CMU/18500/modeling/right_wink_vs_double.json" 
 
 SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
+NUM_SAMPLES_IN_1_5_SEC = int(SAMPLES_PER_SEC * 1.5)
+NUM_SAMPLES_IN_1_SEC = SAMPLES_PER_SEC
+WINDOW_FRAME = 1.3
+NUM_SAMPLES = int(SAMPLES_PER_SEC * WINDOW_FRAME)
+
 EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink', 'left_emg', 'right_emg', 'triple_blink')
 EEG_LABELS = [
   "Timestamp", "EEG.AF3","EEG.T7","EEG.Pz","EEG.T8","EEG.AF4"
@@ -122,28 +131,32 @@ def do_predict(**kwargs):
         new_samples = pandas.DataFrame(new_samples, columns=EEG_LABELS)
         
         window = pandas.concat([window, new_samples])
-        if len(window.index) > NUM_SAMPLES_IN_3_SEC:
-            # start = window.index - NUM_SAMPLES_IN_3_SEC
-            window = window.tail(NUM_SAMPLES_IN_3_SEC)
+        if len(window.index) > NUM_SAMPLES:
+            # start = window.index - NUM_SAMPLES
+            window = window.tail(NUM_SAMPLES)
 
         res = model_predict(window)
         # print("Predicted: ", res)
 
         val = res
-        if val != prev_val and wait + 1.5 < time.time():
-            print(val)
+        if val != prev_val and wait + WINDOW_FRAME < time.time():
+            if val != 'none':
+                print(val)
             # af3_mean = window["EEG.AF3"].median()
             # af4_mean = window["EEG.AF4"].median()
             # window.loc[:,'EEG.AF3'] = af3_mean 
             # window.loc[:, 'EEG.AF4'] = af4_mean
             # print(window)
         if val in EVENTS and val != prev_val \
-            and wait + 1.5 < time.time():
+            and wait + WINDOW_FRAME < time.time():
             wait = time.time()
             dispatch.emit(val, val)
         else: 
             dispatch.emit('other', val)
+
         prev_val = val
+        if wait + WINDOW_FRAME < time.time():
+            prev_val = None 
 
 def compute_feature_vector(model_params, window):
     vec = []
@@ -166,6 +179,7 @@ def initiate_model():
     double_blink =  joblib.load(MODEL_LOC_DOUBLE_BLINK.replace('.json', '.joblib'))
     triple_blink =  joblib.load(MODEL_LOC_TRIPLE_BLINK.replace('.json', '.joblib'))   
     left_vs_right =  joblib.load(MODEL_LOC_LEFT_VS_RIGHT.replace('.json', '.joblib'))  
+    right_vs_double =  joblib.load(MODEL_LOC_RIGHT_VS_DOUBLE.replace('.json', '.joblib'))  
 
 
     base_F = open(MODEL_LOC_BASELINE_EVENT)
@@ -177,6 +191,7 @@ def initiate_model():
     double_blink_F = open(MODEL_LOC_DOUBLE_BLINK)
     triple_blink_F = open(MODEL_LOC_TRIPLE_BLINK)
     left_vs_right_F = open(MODEL_LOC_LEFT_VS_RIGHT)
+    right_vs_double_F = open(MODEL_LOC_RIGHT_VS_DOUBLE)
 
     base_params = json.load(base_F)
     right_wink_params = json.load(right_wink_F)
@@ -187,6 +202,7 @@ def initiate_model():
     double_blink_params = json.load(double_blink_F)
     triple_blink_params = json.load(triple_blink_F)
     left_vs_right_params = json.load(left_vs_right_F)
+    right_vs_double_params = json.load(right_vs_double_F)
 
     
     def model(window):
@@ -199,6 +215,7 @@ def initiate_model():
         v_double_blink = compute_feature_vector(double_blink_params, window)
         v_left_vs_right = compute_feature_vector(left_vs_right_params, window)
         v_triple = compute_feature_vector(triple_blink_params, window)
+        v_right_vs_double = compute_feature_vector(right_vs_double_params, window)
 
         # print(v_base)
         # print(v_right)
@@ -211,6 +228,8 @@ def initiate_model():
             model_status_timestamp[0] = None 
             return 'noisy'
         elif model_status[0] == BLINKED_STATUS:
+            double_pred = double_blink.predict(v_double_blink)[0]
+            triple_pred = triple_blink.predict(v_triple)[0]
             if time.time() > model_status_timestamp[0] + 1:
                 # print(time.time(), model_status_timestamp[0])
                 # over a second has passed we do not care about 
@@ -218,11 +237,11 @@ def initiate_model():
                 model_status[0] = None 
                 model_status_timestamp[0] = None 
                 return 'none'
-            elif double_blink.predict(v_double_blink)[0] == 'double_blink':
+            elif double_pred == 'double_blink' and triple_pred != 'triple_blink':
                 # double blink occured
                 return 'double_blink'
-            # elif triple_blink.predict(v_triple)[0] == 'triple_blink':
-            #     return 'triple_blink'
+            elif triple_blink.predict(v_triple)[0] == 'triple_blink':
+                return 'double_blink'
             return 'none'
         else:
             res1 = base.predict(v_base)
@@ -232,13 +251,19 @@ def initiate_model():
                 R = right_wink.predict(v_right)
                 L = left_wink.predict(v_left)
                 LR = left_vs_right.predict(v_left_vs_right)
+                RD = right_vs_double.predict(v_right_vs_double)
                 single = blink.predict(v_blink)
                 # double = double_blink.predict(v_double_blink)
                 # print(R, L, double)
                 if R[0] == 'right_wink' and L[0] != 'left_wink' \
-                    and LR[0] == 'right_wink':
+                    and LR[0] == 'right_wink' and single[0] != 'blink'\
+                    and RD[0] == 'right_wink':
+                    model_status[0] = BLINKED_STATUS
+                    model_status_timestamp[0] = time.time()
                     return R[0]
                 elif L[0] == 'left_wink' and LR[0] == 'left_wink':
+                    model_status[0] = BLINKED_STATUS
+                    model_status_timestamp[0] = time.time()
                     return L[0]
                 elif single[0] == 'blink':
                     model_status[0] = BLINKED_STATUS
@@ -259,6 +284,10 @@ def detectEMGThread(**kwargs):
     aveL = emg_params[3]
     EMG.emg_combined.detectEMG(dispatch, bt, stdR, stdL, aveR, aveL)
 
+def test():
+    while (1):
+        pyautogui.move(100,100)
+
 
 if __name__ == '__main__':
 
@@ -267,8 +296,8 @@ if __name__ == '__main__':
     cortex_instance = startup()
 
     # startup emg
-    # bt = EMG.emg_combined.start_bluetooth()
-    # emg_params = EMG.emg_combined.emgCalib(bt)
+    bt = EMG.emg_combined.start_bluetooth()
+    emg_params = EMG.emg_combined.emgCalib(bt)
 
     # begin application
     dispatch = Dispatcher()
@@ -292,18 +321,23 @@ if __name__ == '__main__':
         kwargs={'cond':signalling_cond, 'model':model, 'dispatch':dispatch},
         daemon=True
     )
-    # emg_detector = threading.Thread(
-    #     group=None,
-    #     target=detectEMGThread,
-    #     name='emg detector',
-    #     kwargs={'dispatch':dispatch, 'bt':bt, 'emg_params':emg_params},
-    #     daemon=True
-    # )
+    emg_detector = threading.Thread(
+        group=None,
+        target=detectEMGThread,
+        name='emg detector',
+        kwargs={'dispatch':dispatch, 'bt':bt, 'emg_params':emg_params},
+        daemon=True
+    )
 
     # begin executing threads
     data_poll.start()
     predictor.start()
-    # emg_detector.start()
+    emg_detector.start()
+
+    # print('here')
+    # p = multiprocessing.Process(target=test)
+    # p.start()
+
 
     keyboard.main(dispatch, event_queue)
 

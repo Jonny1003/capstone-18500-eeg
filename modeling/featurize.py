@@ -211,6 +211,12 @@ FEATURE_LIBRARY = {
     'num_above_peaks_AF4': lambda df: getNumAboveAveragePeaks(AF4, .1, df),
     'variance_AF3': lambda df: variance(AF3, df),
     'variance_AF4': lambda df: variance(AF4, df),
+    'AF_scaled_ratio' : lambda df: 
+        ((getMaxOfColumn(AF3, df)-median(AF3, df))/variance(AF3, df)) / 
+        ((getMaxOfColumn(AF4, df)-median(AF4, df))/variance(AF4, df)),
+    'AF_scaled_diff' : lambda df: 
+        ((getMaxOfColumn(AF3, df))/variance(AF3, df)) - 
+        ((getMaxOfColumn(AF4, df))/variance(AF4, df)),
     'AF_max_time_diff': lambda df: abs(getTimestampOfMax(AF3, df) - getTimestampOfMax(AF4, df)),
     'AF_max_diff': lambda df: getMaxOfColumn(AF3, df) - getMaxOfColumn(AF4, df),
     'AF_ratio': lambda df: getMaxOfColumn(AF3, df) / getMaxOfColumn(AF4, df),
