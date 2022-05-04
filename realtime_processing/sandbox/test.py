@@ -188,6 +188,16 @@ class KeyboardPage(Page):
                         font = ('arial', 12, 'bold'), command = command)
                     button.grid(row = row + 3, column = col)
                 self.buttons[row].append(button)
+                
+        if self.horizontal == False:
+            mode_text = 'up/down'
+        else:
+            mode_text = 'left/right'
+        mode_button = tkinter.Button(self.parent, text = mode_text, width = 5, height = 4, 
+                    bg = 'grey', fg = 'red', relief = 'raised', padx = 4, pady = 4, bd = 4, 
+                    font = ('arial', 12, 'bold'), command = command)
+        mode_button.grid(row = row + 3, column = col)
+        self.buttons[row].append(mode_button)
 
     def handle_button(self, value):
         if value == 'Delete':
