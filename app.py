@@ -13,7 +13,7 @@ import numpy as np
 import pandas
 import time
 from modeling.featurize import FEATURE_LIBRARY
-import frontend.sandbox.keyboard as keyboard
+import frontend.sandbox.keyboard_old as keyboard
 import EMG.emg_combined
 
 # get sklearn to stop printing warnings
@@ -42,7 +42,7 @@ SAMPLES_PER_SEC = 128
 NUM_SAMPLES_IN_3_SEC = SAMPLES_PER_SEC * 3
 NUM_SAMPLES_IN_1_5_SEC = int(SAMPLES_PER_SEC * 1.5)
 NUM_SAMPLES_IN_1_SEC = SAMPLES_PER_SEC
-WINDOW_FRAME = 1.3
+WINDOW_FRAME = 1.5
 NUM_SAMPLES = int(SAMPLES_PER_SEC * WINDOW_FRAME)
 
 EVENTS = ('left_wink', 'right_wink', 'double_blink', 'blink', 'left_emg', 'right_emg', 'triple_blink')
@@ -256,8 +256,8 @@ def initiate_model():
                 # double = double_blink.predict(v_double_blink)
                 # print(R, L, double)
                 if R[0] == 'right_wink' and L[0] != 'left_wink' \
-                    and LR[0] == 'right_wink' and single[0] != 'blink'\
-                    and RD[0] == 'right_wink':
+                    and LR[0] == 'right_wink': # and single[0] != 'blink'\
+                    # and RD[0] == 'right_wink':
                     model_status[0] = BLINKED_STATUS
                     model_status_timestamp[0] = time.time()
                     return R[0]

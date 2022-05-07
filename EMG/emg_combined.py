@@ -48,7 +48,7 @@ def detectEMG(dispatch, bluetooth, stdR, stdL, aveR, aveL):
                 ratioR = aveDataR / aveR
                 # print("Ratio R", ratioR)
                 #event 
-                if (stdDataR > 20 and ratioR > 2):
+                if (stdDataR > 20 and ratioR > 1.3):
                     print('right_emg')
                     dispatch.emit("right_emg", data)
                 offsetR = 0 #reset the offset
@@ -104,12 +104,14 @@ def emgCalib(bluetooth):
             if (data[0] == 'r'):
                 value = int(data[1:])
                 calibBufRight[rightIdx] = value
+                print("r:", value)
                 rightIdx += 1
         
             elif (data[0] == 'l'):
                 value = int(data[1:])
                 calibBufLeft[leftIdx] = value
                 leftIdx += 1
+                print("l:", value)
 
             #print(type(calibBuf[0]))
             #print("Calibrating value", calibBuf[i])
